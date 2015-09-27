@@ -77,6 +77,7 @@ public class JSEngine {
 		String moduleLoaderPath = ModuleLoaderUtils.getModuleLoaderPath();
 		if (moduleLoaderPath == null){
 			ConsoleUtils.errorln("Module loader missing. Try reinstalling the application.");
+			System.exit(1);
 		}
 		
 		Exception loadException = null;
