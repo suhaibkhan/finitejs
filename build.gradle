@@ -1,0 +1,96 @@
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+version = '0.1.0'
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+ext {
+  projectDistDir = "$distsDir/$project.name-$version"
+}
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile 'org.mapdb:mapdb:2.0-beta7'
+  testCompile 'junit:junit:4.12'
+}
+
+task wrapper(type: Wrapper) {
+  gradleVersion = '2.7'
+}
+
+task startScripts(dependsOn: 'jar'){
+
+  def templateMap = [mainClassName: 'com.finitejs.system.FiniteJS',
+    mainJarName: jar.archivePath.name, projectName: project.name]
+
+  // read start script templates from project root dir
+  def unixStartScript = new File(project.name).getText('UTF-8');
+  def winStartScript = new File(project.name + '.bat').getText('UTF-8');
+
+  // replace template variables
+  templateMap.each{ k, v ->
+    unixStartScript = unixStartScript.replaceAll("@$k@", v);
+    winStartScript = winStartScript.replaceAll("@$k@", v);
+  }
+
+  // write unix start script
+  def targetUnixFile = new File(projectDistDir, project.name);
+  if (!targetUnixFile.parentFile.exists()){
+    targetUnixFile.parentFile.mkdirs();
+  }
+
+  targetUnixFile.write(unixStartScript);
+  targetUnixFile.setExecutable(true, false);
+
+  // write win start script
+  def targetWinFile = new File(projectDistDir, project.name + '.bat');
+  if (!targetWinFile.parentFile.exists()){
+    targetWinFile.parentFile.mkdirs();
+  }
+
+  targetWinFile.write(winStartScript);
+  targetWinFile.setExecutable(true, false);
+}
+
+task copyDistFiles(dependsOn: 'startScripts') {
+
+  inputs.file 'LICENSE'
+  inputs.dir 'src/main/js'
+
+  outputs.dir projectDistDir
+
+  doLast {
+    copy {
+      from jar
+      into projectDistDir
+    }
+    copy {
+      from configurations.runtime
+      into "$projectDistDir/lib"
+    }
+    copy {
+      from 'src/main/js'
+      into projectDistDir
+    }
+    copy {
+      from 'LICENSE'
+      into projectDistDir
+    }
+  }
+}
+
+task distZip (dependsOn: 'copyDistFiles', type: Zip) {
+    from projectDistDir
+}
+
+task distTar (dependsOn: 'copyDistFiles', type: Tar) {
+    from projectDistDir
+}
+
+tasks.assemble.dependsOn(distZip);
+tasks.assemble.dependsOn(distTar);
