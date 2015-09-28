@@ -70,7 +70,11 @@ set CMD_LINE_ARGS=%$
 :execute
 @rem Setup the command line
 
-set CLASSPATH=%APP_HOME%\@mainJarName@;%APP_HOME%\lib\mapdb-2.0-beta7.jar
+set CLASSPATH=%APP_HOME%\@mainJarName@
+
+for %%f in (%APP_HOME%\lib\*.jar) do (
+	set CLASSPATH=%CLASSPATH%;%%f
+)
 
 @rem Execute finitejs
 "%JAVA_EXE%" %DEFAULT_JVM_OPTS% %JAVA_OPTS% %FINITEJS_OPTS%  -classpath "%CLASSPATH%" @mainClassName@ %CMD_LINE_ARGS%

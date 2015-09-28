@@ -52,7 +52,13 @@ done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 APP_HOME=$DIR
 
-CLASSPATH=$APP_HOME/@mainJarName@:$APP_HOME/lib/mapdb-2.0-beta7.jar
+# Add main jar to class path
+CLASSPATH=$APP_HOME/@mainJarName@
+
+# Add all jar in lib to class path
+for filename in $APP_HOME/lib/*.jar; do
+  CLASSPATH=$CLASSPATH:$filename
+done
 
 # Determine the Java command to use to start the JVM.
 if [ -n "$JAVA_HOME" ] ; then
