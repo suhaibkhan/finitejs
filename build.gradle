@@ -61,6 +61,7 @@ task copyDistFiles(dependsOn: 'startScripts') {
 
   inputs.file 'LICENSE'
   inputs.dir 'src/main/js'
+  inputs.dir 'samples'
 
   outputs.dir projectDistDir
 
@@ -76,6 +77,10 @@ task copyDistFiles(dependsOn: 'startScripts') {
     copy {
       from 'src/main/js'
       into projectDistDir
+    }
+    copy {
+      from 'samples'
+      into "$projectDistDir/samples"
     }
     copy {
       from 'LICENSE'
