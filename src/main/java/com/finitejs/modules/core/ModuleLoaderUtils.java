@@ -91,11 +91,12 @@ public class ModuleLoaderUtils {
 			// prepend ./
 			moduleId = String.format("%s%s", "./", moduleId);
 		}
-
+		
 		// check whether relative to parent file path
 		if (moduleId.startsWith("./")){
 			// strip ./
 			moduleId = moduleId.substring(2);
+			
 			// correct environment based file seperator
 			moduleId = moduleId.replaceAll("/", File.separator);
 			
@@ -117,6 +118,7 @@ public class ModuleLoaderUtils {
 		if (moduleId.startsWith("../")){
 			// strip ./
 			moduleId = moduleId.substring(3);
+			
 			// correct environment based file seperator
 			moduleId = moduleId.replaceAll("/", File.separator);
 			
@@ -135,9 +137,9 @@ public class ModuleLoaderUtils {
 		}
 		
 		// check whether core module in modules/core dir
-		String coreModuleDirPath = String.format("%s%s%s", 
-				ConfigManager.getInstance().getModulesPath(), 
-				File.separator, CORE_MODULE_DIRNAME);
+		File coreModuleDir = new File(ConfigManager.getInstance().getModulesPath(), 
+				CORE_MODULE_DIRNAME);
+		String coreModuleDirPath = coreModuleDir.getAbsolutePath();
 		
 		modulePath = checkModuleExists(coreModuleDirPath, moduleId);
 		
@@ -177,6 +179,9 @@ public class ModuleLoaderUtils {
 		if (modulePath == null && moduleDir != null && moduleDir.exists()){
 			modulePath = moduleDir.getAbsolutePath();
 		}
+		
+		// escape windows file string
+		modulePath = modulePath.replace("\\", "\\\\");
 		
 		// null if module not found
 		return modulePath;
@@ -221,6 +226,9 @@ public class ModuleLoaderUtils {
 				}
 			}
 		}
+		
+		// escape windows file string
+		modulePath = modulePath.replace("\\", "\\\\");
 		
 		return modulePath;
 	}

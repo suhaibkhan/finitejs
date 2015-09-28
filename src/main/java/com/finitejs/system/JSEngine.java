@@ -119,10 +119,11 @@ public class JSEngine {
 			ConsoleUtils.errorln("Core module missing. Try reinstalling the application.");
 			System.exit(1);
 		}
-		
+				
 		try {
-			engine.eval(String.format(CORE_EXECUTE_TEMPLATE, 
-					MODULE_LOADER_EXPORT_VAR_NAME, coreModulePath));
+			String coreExecuteScript = String.format(CORE_EXECUTE_TEMPLATE, 
+					MODULE_LOADER_EXPORT_VAR_NAME, coreModulePath);
+			engine.eval(coreExecuteScript);
 		} catch (ScriptException e) {
 			ConsoleUtils.errorln(e);
 			ConsoleUtils.errorf("Core module failed to load from %s%n.", coreModulePath);

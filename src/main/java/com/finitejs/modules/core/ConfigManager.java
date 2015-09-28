@@ -88,8 +88,8 @@ public class ConfigManager {
 	public String getModulesPath(){
 		String modulesPath = get(MODULES_PATH);
 		if (modulesPath == null){
-			modulesPath = String.format("%s%s%s", getRootPath(), 
-					File.separator, ModuleLoaderUtils.getDefaultModulesDir());
+			File modulesDir = new File(getRootPath(), ModuleLoaderUtils.getDefaultModulesDir());
+			modulesPath = modulesDir.getAbsolutePath();
 			configurationMap.put(MODULES_PATH, modulesPath);
 		}
 		return modulesPath;

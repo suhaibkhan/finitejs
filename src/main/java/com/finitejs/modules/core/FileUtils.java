@@ -18,8 +18,6 @@ import com.finitejs.system.FiniteJS;
  * @author Suhaib Khan
  */
 public class FileUtils {
-
-	public static final String SEPERATOR = File.separator;
 	
 	public static String readTextFile(String filePath) throws IOException{
 		byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
