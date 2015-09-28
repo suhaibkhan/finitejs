@@ -48,7 +48,7 @@
 		}
 		
 		if (moduleFilePath == null){
-			console.errorf('Module %s not found', id);
+			console.errorf('Module %s not found. %n', id);
 			if (!__shell){
 				// Terminate program if a module not found.
 				quit();
