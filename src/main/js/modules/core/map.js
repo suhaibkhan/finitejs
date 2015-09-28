@@ -14,7 +14,8 @@ Map.prototype = {
 	remove: function(k) { return this._hashMap.remove(k) !== null; },
 	clear: function() { this._hashMap.clear(); },
 	size: function() { return this._hashMap.size(); },
-	forEach: function(c) { for each (var k in this._hashMap.keySet()){ c(this._hashMap.get(k), k, this); } }
+	forEach: function(c) { for each (var k in this._hashMap.keySet()){ c(this._hashMap.get(k), k, this); } },
+	toString: function(){ return this._hashMap.toString(); }
 };
 
 module.exports = Map;
