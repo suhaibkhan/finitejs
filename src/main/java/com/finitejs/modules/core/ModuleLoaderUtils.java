@@ -181,7 +181,9 @@ public class ModuleLoaderUtils {
 		}
 		
 		// escape windows file string
-		modulePath = modulePath.replace("\\", "\\\\");
+		if (modulePath != null){
+			modulePath = modulePath.replace("\\", "\\\\");
+		}
 		
 		// null if module not found
 		return modulePath;
@@ -228,7 +230,9 @@ public class ModuleLoaderUtils {
 		}
 		
 		// escape windows file string
-		modulePath = modulePath.replace("\\", "\\\\");
+		if (modulePath != null){
+			modulePath = modulePath.replace("\\", "\\\\");
+		}
 		
 		return modulePath;
 	}
