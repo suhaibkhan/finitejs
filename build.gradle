@@ -15,7 +15,7 @@ repositories {
 }
 
 dependencies {
-  compile 'org.mapdb:mapdb:2.0-beta7'
+  // compile 'org.mapdb:mapdb:2.0-beta7'
   testCompile 'junit:junit:4.12'
 }
 
