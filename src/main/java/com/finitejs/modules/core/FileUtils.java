@@ -15,32 +15,51 @@ import com.finitejs.system.FiniteJS;
 /**
  * Utility class for file related operations.
  * 
- * @author Suhaib Khan
  */
 public class FileUtils {
 	
+	/**
+	 * Reads a text file, given path as string.
+	 * 
+	 * @param filePath  path of the file to read
+	 * @return file contents
+	 * @throws IOException
+	 */
 	public static String readTextFile(String filePath) throws IOException{
 		byte[] fileBytes = Files.readAllBytes(Paths.get(filePath));
 		return new String(fileBytes, StandardCharsets.UTF_8);
 	}
 	
+	/**
+	 * Reads a text file, given {@code File} as argument.
+	 * 
+	 * @param file file to read
+	 * @return file contents
+	 * @throws IOException
+	 */
 	public static String readTextFile(File file) throws IOException{
 		byte[] fileBytes = Files.readAllBytes(Paths.get(file.toURI()));
 		return new String(fileBytes, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * Get current working directory.
+	 * 
+	 * @return absolute path of working directory 
+	 */
 	public static String getWorkingDir(){
 		Path dir = Paths.get("");
 		return dir.toAbsolutePath().toString();
 	}
 
 	/**
-	 * Get path of finitejs jar. All modules will be loaded in relative to this path.
+	 * Get path of finitejs jar. 
+	 * All modules will be loaded in relative to this path.
 	 * 
 	 * Based on the implementation from 
-	 * http://stackoverflow.com/questions/15359702/get-location-of-jar-file
+	 * {@link http://stackoverflow.com/questions/15359702/get-location-of-jar-file }
 	 * 
-	 * @return Root Path.
+	 * @return root path
 	 */
 	public static String getRootPath() {
 		
