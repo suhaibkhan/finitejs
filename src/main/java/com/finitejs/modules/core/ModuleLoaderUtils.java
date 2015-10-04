@@ -4,32 +4,82 @@ import java.io.File;
 import java.io.IOException;
 
 /**
- * Utility class for finitejs modules loading operations.
- * 
- * @author Suhaib Khan
- *
+ * Utility class for finite.js module loading operations.
+ * This class is used by finite.js JavaScript module loader for loading
+ * other modules.
  */
 public class ModuleLoaderUtils {
 	
+	/**
+	 * Constant for JavaScript extension.
+	 * <p>
+	 * Module files can be loaded without extension and this 
+	 * will be the default extension.
+	 * </p>
+	 */
 	public static final String JS_EXTENSION = ".js";
+	
+	/**
+	 * Constant for module package file name.
+	 * <p>
+	 * Module main file information is present in this
+	 * package file in the case of directory modules.
+	 * </p>
+	 */
 	public static final String MODULE_PACKAGE_FILE_NAME = "package.json";
+	
+	/**
+	 * Constant containing default module main file names.
+	 * <p>
+	 * If package file of a directory module does not contain 
+	 * information regarding main file, then module loader will search for
+	 * these default main files.
+	 * </p>
+	 */
 	public static final String[] DEFAULT_PACKAGE_MAIN = {"index.js", "main.js"};
 	
+	/**
+	 * Constant for default finite.js modules directory name.
+	 */
 	private static final String DEFAULT_MODULE_DIRNAME = "modules";
+	
+	/**
+	 * Constant for finite.js core module directory name.
+	 */
 	private static final String CORE_MODULE_DIRNAME = "core";
+	
+	/**
+	 * Constant for finite.js core module name.
+	 * <p>
+	 * Core module is the JavaScript entry point of finite.js and
+	 * this core module is also loaded by JavaScript module loader.
+	 * </p>
+	 */
 	private static final String CORE_MODULE_NAME = "finite";
+	
+	/**
+	 * Constant for finite.js JavaScript module loader name.
+	 */
 	private static final String LOADER_MODULE_NAME = "module";
 	
-	// Module template - All modules will be wrapped around this template.
+	/**
+	 * Constant for module execution template.
+	 * <p>
+	 * All module execution is made by wrapping around this template.
+	 * </p>
+	 */
 	private static final String MODULE_TEMPLATE = String.format("%s%s", 
 			"(function (exports, require, module, __filename, __dirname){",
 			"%n%s%n}).call(this, module.exports, module.require, module, '%s', '%s');");
 	
 	/**
+	 * Reads contents of a module script based on the 
+	 * path returned by {@code resolveModuleFilePath} and
+	 * wraps it around execution template.
 	 * 
-	 * @param modulePath
-	 * @return
-	 * @throws ModuleLoadException
+	 * @param modulePath  path of module
+	 * @return module script for execution
+	 * @throws ModuleLoadException if error while reading module
 	 */
 	public static String readModule(String modulePath) throws ModuleLoadException{
 		String moduleContents = "";
@@ -45,16 +95,36 @@ public class ModuleLoaderUtils {
 				moduleContents, modulePath, new File(modulePath).getParent());
 	}
 	
+	/**
+	 * Reads a JavaScript file. Used to read script file other 
+	 * than modules. {@code JSEngine} uses this method to load module loader.
+	 * 
+	 * @param path  path of JavaScript file.
+	 * @return script file contents
+	 * @throws IOException
+	 */
 	public static String readScript(String path) throws IOException{
 		String script = FileUtils.readTextFile(path);
 		return script;
 	}
 	
 	/**
+	 * Resolves module id to a file path based on given rules.
+	 * <p>
+	 * <li>Check whether module id is an absolute file path, then return it as is.</li>
+	 * <li>Check whether module id starts with {@code ./} or {@code ../} or a main file, 
+	 * then these modules are loaded relative to parent file and main 
+	 * file relative to working directory. Main file is the file supplied to
+	 * finite.js as command line argument.</li>
+	 * <li>Check whether if it is a core module. Core modules also exists in
+	 * modules directory, but does not require to specify core module directory name.</li>
+	 * <li>Check whether if module exists in modules directory.</li>
+	 * </p>
 	 * 
-	 * @param moduleId
-	 * @param parentFilePath
-	 * @return
+	 * @param moduleId  id of module
+	 * @param parentFilePath  module parent path
+	 * @param isMain  indicates whether module is a main file
+	 * @return absolute file/directory path of module or null if module not exists
 	 */
 	public static String resolveModuleFilePath(
 			String moduleId, String parentFilePath, boolean isMain){
@@ -155,6 +225,9 @@ public class ModuleLoaderUtils {
 		return modulePath;
 	}
 	
+	/**
+	 * Used by {@code resolveModuleFilePath} for checking whether modules exists.
+	 */
 	private static String checkModuleExists(String parentDir, String moduleId){
 		
 		String modulePath = null;
@@ -190,6 +263,13 @@ public class ModuleLoaderUtils {
 		
 	}
 	
+	/**
+	 * Read contents of module package file while loading directory modules.
+	 * 
+	 * @param modulePath  module directory path
+	 * @return package file contents
+	 * @throws IOException
+	 */
 	public String readModulePackageFile(String modulePath) throws IOException{
 		String packageFileContents = null;
 		File packageFile = new File(modulePath, MODULE_PACKAGE_FILE_NAME);
@@ -199,6 +279,17 @@ public class ModuleLoaderUtils {
 		return packageFileContents;
 	}
 	
+	/**
+	 * Check for directory module main file. 
+	 * <p>
+	 * Main file is read from package file, if main file doesn't exists
+	 * then checks for default main files.
+	 * </p>
+	 * 
+	 * @param packageDir  module directory path 
+	 * @param packageMainFile  module main file, can be null
+	 * @return absolute path to directory module main file or null if not found
+	 */
 	public String checkModulePackageMain(String packageDir, String packageMainFile){
 		String modulePath = null;
 		File packageMain;
@@ -237,12 +328,19 @@ public class ModuleLoaderUtils {
 		return modulePath;
 	}
 	
+	/**
+	 * Returns default finite.js modules directory name.
+	 * 
+	 * @return modules directory name
+	 */
 	public static String getDefaultModulesDir(){
 		return DEFAULT_MODULE_DIRNAME;
 	}
 	
 	/**
-	 * @return
+	 * Get finite.js JavaScript module loader path.
+	 * 
+	 * @return module loader path
 	 */
 	public static String getModuleLoaderPath(){
 		String moduleLoaderPath = 
@@ -250,6 +348,11 @@ public class ModuleLoaderUtils {
 		return moduleLoaderPath;
 	}
 	
+	/**
+	 * Get finite.js core module path.
+	 * 
+	 * @return core module path.
+	 */
 	public static String getCoreModulePath(){
 		String coreModulePath = 
 				resolveModuleFilePath(CORE_MODULE_NAME, null, false);
