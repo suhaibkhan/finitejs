@@ -2,9 +2,6 @@ package com.finitejs.modules.core;
 
 /**
  * Exception class for errors related to module loading.
- * 
- * @author Suhaib Khan
- *
  */
 public class ModuleLoadException extends Exception{
 
