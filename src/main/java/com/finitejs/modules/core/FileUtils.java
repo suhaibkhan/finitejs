@@ -53,7 +53,7 @@ public class FileUtils {
 	}
 
 	/**
-	 * Get path of finitejs jar. 
+	 * Get path of finite.js jar. 
 	 * All modules will be loaded in relative to this path.
 	 * 
 	 * Based on the implementation from 
