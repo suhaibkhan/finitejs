@@ -3,21 +3,26 @@ package com.finitejs.system;
 import com.finitejs.modules.core.ConfigManager;
 
 /**
- * 
  * Class for processing command line arguments.
- * 
- * @author Suhaib Khan
- *
  */
 public class CmdLineArgProcessor {
 	
+	/**
+	 * Constant for command line argument flag to 
+	 * change modules directory.
+	 */
 	public static final String MODULES_DIR_SETTING = "-ModulesDir";
+	
+	/**
+	 * Constant for command line argument flag to 
+	 * enable debug mode.
+	 */
 	public static final String DEBUG_ENABLE_SETTING = "-Debug";
 	
 	/**
-	 * Processes command line arguments passed to finitejs executable.
+	 * Processes command line arguments passed to finite.js executable.
 	 * 
-	 * @param args Command line arguments
+	 * @param args command line arguments
 	 */
 	public static void process(final String[] args){
 				
