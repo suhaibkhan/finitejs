@@ -1,18 +1,20 @@
 
-#### Build finite.js
+### finite.js
+JavaScript based data analysis tool.
+#### Build
 ```
 cd <to finitejs folder>
 ./gradlew build
 ```
-#### Start finite.js
+#### Start
 ```
 cd build/distributions/finitejs-0.1.0
 ./finitejs
 ```
-#### Test finite.js
+#### Test
 ```js
-read.csv('samples/sample.csv’);
+read.csv('samples/sample.csv');
 quit();
 ```
-#### Contribute to finite.js
-Initial development is going on and if you are interested contact me at suhaibklm@gmail.com.
+#### Contribute
+Initial development is going on and if you are interested, contact me at suhaibklm@gmail.com.
