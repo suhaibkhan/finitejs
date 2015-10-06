@@ -9,6 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * {@code PlainReader} can be used to read file formats like CSV, TSV, 
+ * and all other formats where rows are newline separated and 
+ * columns separated by some delimiters.
+ */
 public class PlainReader {
 	
 	private static final String DEFAULT_COMMENT_STRING = "#";
