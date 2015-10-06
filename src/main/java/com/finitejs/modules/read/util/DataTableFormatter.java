@@ -11,7 +11,8 @@ import com.finitejs.modules.read.DataTable;
  */
 public class DataTableFormatter {
 
-	/** Constant for format of skipped rows message to be printed 
+	/** 
+	 * Constant for format of skipped rows message to be printed 
 	 * in end of tabular format. 
 	 */
 	private static final String ROWS_REMAINING_MSG_FORMAT = "Skipped %s rows.";
