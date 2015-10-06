@@ -183,7 +183,7 @@ public interface ColumnType<T> {
 	 * </p>
 	 * 
 	 * @param typeString  type specifier string
-	 * @return column type
+	 * @return column type, or null if type specifier is empty
 	 */
 	public static ColumnType<?> getType(String typeString){
 		ColumnType<?> type = null;
