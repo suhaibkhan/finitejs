@@ -52,10 +52,6 @@ public class Column<T> implements Iterable<T>{
 		if (type != null){
 			T value = type.parse(stringValue);
 			column.add(value);
-		}else{
-			// non-typed column
-			// every values will be null
-			column.add(null);
 		}
 	}
 	
@@ -66,6 +62,9 @@ public class Column<T> implements Iterable<T>{
 	 * @return formatted string representation
 	 */
 	public String formatValue(T value){
+		if (type == null){
+			return "";
+		}
 		return type.format(value);
 	}
 	
@@ -92,9 +91,13 @@ public class Column<T> implements Iterable<T>{
 	 * 
 	 * @param name  column header name
 	 * @param type  type of the column
-	 * @return column instance
+	 * @return column instance, or null if type is empty
 	 */
 	public static <T> Column<T> create(String name, ColumnType<T> type){
+		// type cannot be null
+		if (type == null){
+			return null;
+		}
 		return new Column<T>(name, type);
 	}
 
