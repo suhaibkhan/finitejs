@@ -3,6 +3,11 @@ package com.finitejs.modules.read;
 import java.util.Iterator;
 import java.util.ListIterator;
 
+/**
+ * Iterator for formatted string representation of column values.
+ * 
+ * @param <T>  Type of column
+ */
 public class FormattedColumnIterator<T> implements Iterator<String>{
 
 	private Column<T> column;
@@ -24,7 +29,7 @@ public class FormattedColumnIterator<T> implements Iterator<String>{
 
 	@Override
 	public String next() {
-		return column.formatValue(columnIterator.next());
+		return column.getType().format(columnIterator.next());
 	}
 
 }
