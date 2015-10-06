@@ -5,12 +5,18 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+/**
+ * Iterator for table rows.
+ */
 public class DataTableIterator implements Iterator<List<?>>{
 	
+	/** Iterator row count limit */
 	private int limit;
 	
+	/** Current iterator position */
 	private int position;
 	
+	/** List of column iterators */
 	private List<ListIterator<?>> columnIterators;
 	
 	public DataTableIterator(DataTable table){
