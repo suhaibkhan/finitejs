@@ -56,16 +56,27 @@ public class Column<T> implements Iterable<T>{
 	}
 	
 	/**
-	 * Get formatted string representation of given column value.
+	 * Returns column element at specified row index.
 	 * 
-	 * @param value  value to be formatted
-	 * @return formatted string representation
+	 * @param index  position of element to return
+	 * @return element at specified row in this column
 	 */
-	public String formatValue(T value){
+	public T get(int index){
+		return column.get(index);
+	}
+	
+	/**
+	 * Returns formatted string representation of column element 
+	 * at specified row index.
+	 * 
+	 * @param index  position of element to return
+	 * @return string representation element at specified row in this column
+	 */
+	public String getFormattedValue(int index){
 		if (type == null){
 			return "";
 		}
-		return type.format(value);
+		return type.format(column.get(index));
 	}
 	
 	/**
