@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+/**
+ * Iterator for formatted string representation of table rows.
+ * 
+ * @param <T>  Type of column
+ */
 public class FormattedDataTableIterator implements Iterator<List<String>>{
 	
+	/** Current iterator position */
 	private int position;
 	
+	/** Iterator row count limit */
 	private int limit;
 	
+	/** List of column iterators */
 	private List<Iterator<String>> formattedColumnIterators;
 	
 	public FormattedDataTableIterator(DataTable table){
