@@ -131,7 +131,7 @@ public class Column<T> implements Iterable<T>{
 	 * starting at the specified position in the column list.
 	 * 
 	 * @param index  index of first element to be 
-	 * returned by the iterator {@code next()} method.
+	 * returned by the iterator {@code next()} method
 	 * @return a list iterator starting at the specified index
 	 */
 	public ListIterator<T> listIterator(int index){
