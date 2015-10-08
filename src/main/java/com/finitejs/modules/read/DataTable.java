@@ -314,9 +314,11 @@ public class DataTable implements Iterable<List<?>>{
 		}
 		
 		// add rows
-		Iterator<List<String>> dataItr = data.iterator();
-		while(dataItr.hasNext()){
-			table.addRow(dataItr.next());
+		if(data != null){
+			Iterator<List<String>> dataItr = data.iterator();
+			while(dataItr.hasNext()){
+				table.addRow(dataItr.next());
+			}
 		}
 		
 		return table;
@@ -392,6 +394,11 @@ public class DataTable implements Iterable<List<?>>{
 		List<ColumnType<?>> typeList = new ArrayList<>();
 		if (predefinedTypeList != null){
 			typeList.addAll(predefinedTypeList);
+		}
+		
+		// null check
+		if (data == null){
+			return typeList;
 		}
 		
 		Iterator<List<String>> rowItr = data.iterator();
