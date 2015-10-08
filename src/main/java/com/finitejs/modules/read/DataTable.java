@@ -186,45 +186,6 @@ public class DataTable implements Iterable<List<?>>{
 	}
 	
 	/**
-	 * Creates a new {@code DataTable} instance with given header list, 
-	 * type list and data as list of list.
-	 * 
-	 * @param headerList  column header names
-	 * @param typeList  column types
-	 * @param data  tabular data as list of columns and each 
-	 * column as list of string values.
-	 * @return {@code DataTable} instance
-	 */
-	public static DataTable getTable(
-			List<String> headerList, List<ColumnType<?>> typeList, 
-			List<List<String>> data){
-		
-		DataTable table = new DataTable();
-		
-		// create columns
-		Iterator<String> headerItr = headerList.iterator();
-		Iterator<ColumnType<?>> typeItr = typeList.iterator();
-		while(headerItr.hasNext()){
-			
-			String header = headerItr.next();
-			ColumnType<?> type = null;
-			if (typeItr.hasNext()){
-				type = typeItr.next();
-			}
-			
-			table.addColumn(header, type, null);
-		}
-		
-		// add rows
-		Iterator<List<String>> dataItr = data.iterator();
-		while(dataItr.hasNext()){
-			table.addRow(dataItr.next());
-		}
-		
-		return table;
-	}
-	
-	/**
 	 * Returns an iterator over rows of table.
 	 */
 	@Override
@@ -321,5 +282,159 @@ public class DataTable implements Iterable<List<?>>{
 	 */
 	public String toString(int startIndex, int limit){
 		return DataTableFormatter.formatToTable(this, startIndex, limit);
+	}
+	
+	/**
+	 * Creates a new {@code DataTable} instance with given header list, 
+	 * type list and data as list of list.
+	 * 
+	 * @param data  tabular data as list of rows and each 
+	 * row as list of string values
+	 * @param typeList  column types
+	 * @param headerList  column header names
+	 * @return {@code DataTable} instance
+	 */
+	public static DataTable getTable(List<List<String>> data, 
+			List<ColumnType<?>> typeList, List<String> headerList){
+		
+		DataTable table = new DataTable();
+		
+		// create columns
+		Iterator<String> headerItr = headerList.iterator();
+		Iterator<ColumnType<?>> typeItr = typeList.iterator();
+		while(headerItr.hasNext()){
+			
+			String header = headerItr.next();
+			ColumnType<?> type = null;
+			if (typeItr.hasNext()){
+				type = typeItr.next();
+			}
+			
+			table.addColumn(header, type, null);
+		}
+		
+		// add rows
+		Iterator<List<String>> dataItr = data.iterator();
+		while(dataItr.hasNext()){
+			table.addRow(dataItr.next());
+		}
+		
+		return table;
+	}
+	
+	/**
+	 * Creates a new {@code DataTable} instance with given header list, 
+	 * type specifier list and data as list of list.
+	 * 
+	 * @param data  tabular data as list of rows and each 
+	 * row as list of string values.
+	 * @param typeStringList  list of string representation of types in column order
+	 * @param headerList  list of column headers
+	 * @return {@code DataTable} instance
+	 */
+	public static DataTable getTableWithTypeStrings(List<List<String>> data, 
+			List<String> typeStringList, List<String> headerList){
+		
+		List<ColumnType<?>> predefinedTypeList = new ArrayList<>();
+		
+		// convert type strings to ColumnType list
+		if (typeStringList != null && !typeStringList.isEmpty()){
+			for (String typeString : typeStringList){
+				predefinedTypeList.add(ColumnType.getType(typeString));
+			}
+		}
+		
+		List<ColumnType<?>> typeList = findDataTypes(data, predefinedTypeList);
+		
+		// add column index as default headers
+		if (headerList.size() < typeList.size()){
+			for (int i = headerList.size(); i < typeList.size(); i++){
+				headerList.add(String.valueOf(i));
+			}
+		}
+		
+		return getTable(data, typeList, headerList);
+	}
+	
+	/**
+	 * Creates a new {@code DataTable} instance with given tabular data.
+	 * 
+	 * @param data  tabular data as list of rows and each 
+	 * row as list of string values
+	 * @return {@code DataTable} instance
+	 */
+	public static DataTable getTable(List<List<String>> data){
+		
+		// dynamically find column type
+		List<ColumnType<?>> typeList = findDataTypes(data, null);
+		List<String> headerList = new ArrayList<>();
+		
+		// add column index default header
+		for (int i = 0; i < typeList.size(); i++){
+			headerList.add(String.valueOf(i));
+		}
+		
+		return getTable(data, typeList, headerList);
+	}
+	
+	/**
+	 * Dynamically find type of tabular data. If a predefined type exists for a column,
+	 * then type checking will be skipped for that column.
+	 * 
+	 * @param data  tabular data as list of rows and each 
+	 * row as list of string values.
+	 * @param predefinedTypeList  list of predefined types in column order
+	 * @return list of types
+	 */
+	public static List<ColumnType<?>> findDataTypes(
+			List<List<String>> data, List<ColumnType<?>> predefinedTypeList){
+		
+		List<ColumnType<?>> typeList = new ArrayList<>();
+		if (predefinedTypeList != null){
+			typeList.addAll(predefinedTypeList);
+		}
+		
+		Iterator<List<String>> rowItr = data.iterator();
+		
+		while (rowItr.hasNext()){
+			List<String> rowData = rowItr.next();
+			
+			ColumnType<?> prevType = null;
+			ColumnType<?> curType = null;
+			Iterator<String> colItr = rowData.iterator();
+			
+			for (int i = 0; i < rowData.size(); i++){
+				
+				// check if type already defined
+				if (predefinedTypeList != null && predefinedTypeList.size() > i && 
+						predefinedTypeList.get(i) != null){
+					continue;
+				}
+				
+				// get previous type of the column
+				if (typeList.size() <= i){
+					// initialize type list with null
+					typeList.add(null);
+				}else{
+					prevType = typeList.get(i);
+				}
+				
+				// determine current type
+				curType = ColumnType.findType(colItr.next());
+				
+				// resolve conflict
+				if (prevType != null && curType != null && (!prevType.equals(curType))){
+					curType = ColumnType.getPreferredType(prevType, curType);
+					typeList.set(i, curType);
+				}
+				
+				// update new type
+				if (prevType == null && curType != null){
+					typeList.set(i, curType);
+				}
+			}
+		}
+		
+		return typeList;
 	}
 }

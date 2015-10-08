@@ -338,7 +338,7 @@ public class PlainReader {
 			}
 		}
 		
-		DataTable dTable = DataTable.getTable(headerList, typeList, csvData);
+		DataTable dTable = DataTable.getTable(csvData, typeList, headerList);
 		
 		return dTable;
 	}
