@@ -16,15 +16,40 @@ import java.util.List;
  */
 public class PlainReader {
 	
-	private static final String DEFAULT_COMMENT_STRING = "#";
-	private static final String DEFAULT_DELIMITER = ",";
+	/**
+	 * Constant for default comment string/character. 
+	 * Lines starting with comment characters will be ignored while reading.
+	 */
+	public static final String DEFAULT_COMMENT_STRING = "#";
 	
+	/**
+	 * Constant for default delimiter.
+	 * If no other delimiters are used while reading, file format is 
+	 * considered to be CSV.
+	 */
+	public static final String DEFAULT_DELIMITER = ",";
+	
+	/** 
+	 * Predefined column type list. If a column type is predefined, 
+	 * then dynamic type checking is skipped for that column. Table column index
+	 * is matched with column type index in this list.
+	 */
 	private List<ColumnType<?>> predefinedTypeList;
 	
+	/**
+	 * Predefined column header list. If a column header is predefined, 
+	 * then header from file is discarded. Table column index
+	 * is matched with column header index in this list.
+	 */
 	private List<String> preDefinedHeaderList;
 	
+	/**
+	 * {@link InputFormatter} to be used for each column. Table column index
+	 * is matched with column formatter index in this list.
+	 */
 	private List<InputFormatter> inputFormatterList;
 	
+	/** Comment string used */
 	private String commentString;
 	
 	private PlainReader(){
@@ -34,6 +59,13 @@ public class PlainReader {
 		commentString = DEFAULT_COMMENT_STRING;
 	}
 	
+	/**
+	 * Set a predefined type for a column with specified index. If a column 
+	 * type is predefined, then dynamic type checking is skipped for that column.
+	 * 
+	 * @param columnIndex  index of the column to which the type is set
+	 * @param typeString  string representation of the type
+	 */
 	public void setType(int columnIndex, String typeString){
 		// initialize with null
 		if (predefinedTypeList.size() <= columnIndex){
@@ -45,6 +77,13 @@ public class PlainReader {
 		predefinedTypeList.set(columnIndex, ColumnType.getType(typeString));
 	}
 	
+	/**
+	 * Set a predefined type for columns. If a column type is predefined, then dynamic 
+	 * type checking is skipped for that column. Table column index is matched with 
+	 * column type index in this list.
+	 * 
+	 * @param typeStringArray  list of string representation of types in column order
+	 */
 	public void setType(String[] typeStringArray){
 		
 		// clear type list
@@ -56,6 +95,13 @@ public class PlainReader {
 		
 	}
 	
+	/**
+	 * Set a predefined header for a column with specified index. If a column header 
+	 * is predefined, then header from file is discarded.
+	 * 
+	 * @param columnIndex  index of the column to which the header is set
+	 * @param header  column header
+	 */
 	public void setHeader(int columnIndex, String header){
 		// initialize with null
 		if (preDefinedHeaderList.size() <= columnIndex){
@@ -67,6 +113,13 @@ public class PlainReader {
 		preDefinedHeaderList.set(columnIndex, header);
 	}
 	
+	/**
+	 * Set a predefined header for columns. If a column header is predefined, then header 
+	 * from file is discarded.  Table column index is matched with column header 
+	 * index in this list.
+	 * 
+	 * @param headerArray  list of column headers
+	 */
 	public void setHeader(String[] headerArray){
 		
 		// clear header list
@@ -78,6 +131,12 @@ public class PlainReader {
 		
 	}
 	
+	/**
+	 * Set an {@link InputFormatter} for a column with specified index. 
+	 * 
+	 * @param columnIndex  index of the column to which the formatter is set
+	 * @param inputFormatter  {@link InputFormatter} to use
+	 */
 	public void setFormatter(int columnIndex, InputFormatter inputFormatter){
 		// initialize with null
 		if (inputFormatterList.size() <= columnIndex){
@@ -89,6 +148,12 @@ public class PlainReader {
 		inputFormatterList.set(columnIndex, inputFormatter);
 	}
 	
+	/**
+	 * Set {@link InputFormatter} for columns. Table column index is matched with 
+	 * column formatter index in this list.
+	 * 
+	 * @param inputFormatterArray  list of {@link InputFormatter} to be used
+	 */
 	public void setFormatter(InputFormatter[] inputFormatterArray){
 		
 		// clear formatter list
@@ -100,6 +165,12 @@ public class PlainReader {
 		
 	}
 	
+	/**
+	 * Set a comment string to use while reading. Lines starting with comment 
+	 * string will be ignored.
+	 * 
+	 * @param commentString  comment string
+	 */
 	public void setCommentString(String commentString){
 		if (commentString != null && !commentString.trim().isEmpty()){
 			this.commentString = commentString;
@@ -109,19 +180,58 @@ public class PlainReader {
 		}
 	}
 	
+	/**
+	 * Read the specified file and returns the whole data as a {@link DataTable}.
+	 * Default delimiter will be used to separate columns and first non-comment row
+	 * will be considered as header row.
+	 * 
+	 * @param filePath  path of the file
+	 * @return {@link DataTable}
+	 * @throws IOException if error occurs when reading file
+	 */
 	public DataTable read(String filePath) throws IOException{
 		return read(new File(filePath), DEFAULT_DELIMITER, true);
 	}
 	
+	/**
+	 * Read the specified file and returns the whole data as a {@link DataTable}.
+	 * Specified custom delimiter will be used to separate columns and first 
+	 * non-comment row will be considered as header row.
+	 * 
+	 * @param filePath  path of the file
+	 * @param delimiter  custom delimiter to separate columns in a row
+	 * @return {@link DataTable}
+	 * @throws IOException if error occurs when reading file
+	 */
 	public DataTable read(String filePath, String delimiter) throws IOException{
 		return read(new File(filePath), delimiter, true);
 	}
 	
+	/**
+	 * Read the specified file and returns the whole data as a {@link DataTable}.
+	 * Specified custom delimiter will be used to separate columns.
+	 * 
+	 * @param filePath  path of the file
+	 * @param delimiter  custom delimiter to separate columns in a row
+	 * @param isHeaderPresent  true if first non-comment row is header row, else false
+	 * @return {@link DataTable}
+	 * @throws IOException if error occurs when reading file
+	 */
 	public DataTable read(String filePath, 
 			String delimiter, boolean isHeaderPresent) throws IOException{
 		return read(new File(filePath), delimiter, isHeaderPresent);
 	}
 	
+	/**
+	 * Read the specified file and returns the whole data as a {@link DataTable}.
+	 * Specified custom delimiter will be used to separate columns.
+	 * 
+	 * @param file  file to read
+	 * @param delimiter  custom delimiter to separate columns in a row
+	 * @param isHeaderPresent  true if first non-comment row is header row, else false
+	 * @return {@link DataTable}
+	 * @throws IOException if error occurs when reading file
+	 */
 	public DataTable read(File file, 
 			String delimiter, boolean isHeaderPresent) throws IOException {
 		
@@ -233,16 +343,34 @@ public class PlainReader {
 		return dTable;
 	}
 	
+	/**
+	 * Returns a new {@code PlainReader} instance.
+	 * 
+	 * @return {@code PlainReader} instance
+	 */
 	public static PlainReader get(){
 		return new PlainReader();
 	}
 	
+	/**
+	 * Returns a new {@code PlainReader} instance with specified type list.
+	 * 
+	 * @param typeStringArray  list of string representation of types in column order
+	 * @return {@code PlainReader} instance
+	 */
 	public static PlainReader get(String[] typeStringArray){
 		PlainReader reader = new PlainReader();
 		reader.setType(typeStringArray);
 		return reader;
 	}
 	
+	/**
+	 * Returns a new {@code PlainReader} instance with specified type list and column headers.
+	 * 
+	 * @param typeStringArray  list of string representation of types in column order
+	 * @param headerArray  list of column headers
+	 * @return {@code PlainReader} instance
+	 */
 	public static PlainReader get(String[] typeStringArray, String[] headerArray){
 		PlainReader reader = new PlainReader();
 		reader.setType(typeStringArray);
