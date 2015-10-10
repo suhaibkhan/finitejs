@@ -30,6 +30,7 @@ public class FormattedDataTableIterator implements Iterator<List<String>>{
 	
 	public FormattedDataTableIterator(DataTable table, int startIndex, int limit){
 		position = startIndex;
+		limit += startIndex;
 		this.limit = limit < table.getRowCount() ? limit : table.getRowCount();
 		formattedColumnIterators = new ArrayList<>();
 		

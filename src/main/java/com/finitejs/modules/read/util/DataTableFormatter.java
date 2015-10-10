@@ -86,7 +86,7 @@ public class DataTableFormatter {
 		if (startIndex > 0 || limit < table.getRowCount()){
 			
 			int noOfSkippedStartRows = startIndex;
-			int noOfSkippedEndRows = table.getRowCount() - limit;
+			int noOfSkippedEndRows = table.getRowCount() - (startIndex + limit);
 			
 			// empty row
 			tableStrBuffer.append(String.format("%s %" + (totalChartCountInRow - 2) + "s%n", 
