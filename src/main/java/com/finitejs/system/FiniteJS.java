@@ -13,6 +13,11 @@ public class FiniteJS {
 	public static final String APP_NAME = "finite.js";
 	
 	/**
+	 * Constant for application version.
+	 */
+	public static final String APP_VERSION = "0.1.0";
+	
+	/**
 	 * Constant for minimum java version required to run finite.js.
 	 */
 	public static final double MIN_JAVA_VERSION = 1.8;

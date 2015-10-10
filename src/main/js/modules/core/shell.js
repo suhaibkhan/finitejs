@@ -24,11 +24,24 @@ function start(){
 	
 	var input, output;
 	
+	// print application info
+	console.printAppInfo();
+	
 	// REPL - Read Eval Print Loop
 	while(true){
-		console.printf("%n%s ",">");
+		
+		if (input == null || input == ''){
+			console.printf("%s ",">>");
+		}else{
+			console.printf("%n%s ",">>");
+		}
+		
 		try{
 			input = consoleReader.readLine();
+			
+			if (input == null || input == ''){
+				continue;
+			}
 			
 			// parse input to enable mutiline expressions
 			

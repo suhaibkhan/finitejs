@@ -3,6 +3,8 @@ package com.finitejs.modules.core;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
+import com.finitejs.system.FiniteJS;
+
 /**
  * Utility class for console I/O.
  */
@@ -83,6 +85,14 @@ public class ConsoleUtils {
 	public static void errorf(String format, Object... args){
 		String error = String.format(format, args);
 		System.err.print(error);
+	}
+	
+	/**
+	 * Prints application information on console.
+	 */
+	public static void printAppInfo(){
+		String appInfoStr = String.format("%s %s%n", FiniteJS.APP_NAME, FiniteJS.APP_VERSION);
+		System.out.println(appInfoStr);
 	}
 	
 }
