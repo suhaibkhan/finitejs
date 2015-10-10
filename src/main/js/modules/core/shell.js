@@ -26,7 +26,7 @@ function start(){
 	
 	// REPL - Read Eval Print Loop
 	while(true){
-		console.print("> ");
+		console.printf("%n%s ",">");
 		try{
 			input = consoleReader.readLine();
 			
@@ -36,9 +36,14 @@ function start(){
 			output = JSEngine.getInstance().evalInContext(input, module.context);
 			
 			// output result
-			console.println(output);
+			if (output && typeof output.toString === 'function'){
+				console.print(output.toString());
+			}else{
+				console.print(output);
+			}
 		}catch(ex){
-			console.errorln(ex);
+			ex.printStackTrace();
+			console.error(ex);
 		}
 	}
 }
