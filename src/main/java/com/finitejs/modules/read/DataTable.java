@@ -347,6 +347,9 @@ public class DataTable implements Iterable<List<?>>{
 		}
 		
 		List<ColumnType<?>> typeList = findDataTypes(data, predefinedTypeList);
+		if (typeList.size() == 0){
+			throw new IllegalArgumentException("Not able to determine type of data");
+		}
 		
 		if (headerList == null){
 			headerList = new ArrayList<>();
@@ -373,6 +376,10 @@ public class DataTable implements Iterable<List<?>>{
 		
 		// dynamically find column type
 		List<ColumnType<?>> typeList = findDataTypes(data, null);
+		if (typeList.size() == 0){
+			throw new IllegalArgumentException("Not able to determine type of data");
+		}
+		
 		List<String> headerList = new ArrayList<>();
 		
 		// add column index default header
