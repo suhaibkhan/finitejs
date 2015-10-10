@@ -4,6 +4,9 @@
 main limitation of R is its steep learning curve. The main purpose of this project 
 is to overcome that limitation by providing an easy to use data analysis tool for 
 anyone with basic JavaScript knowledge.
+
+The project is at budding stage. Project wiki and detailed documentation will be
+updated with the initial release.
 #### Build
 ```
 cd <to finitejs folder>
@@ -25,5 +28,4 @@ and it follows CommonJS module system similar to Node.js. So any JavaScript deve
 write a new module for finite.js. Modules that include native functionality should be 
 implemented in Java and can be executed from JavaScript with the help of Nashorn API.
 
-Project is at budding stage and if you are interested to know about 
-development plans, contact me at suhaibklm@gmail.com.
+If you are interested to know about development plans, contact me at suhaibklm@gmail.com.
