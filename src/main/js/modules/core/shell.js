@@ -44,8 +44,9 @@ function start(){
 			// use shell context to parse all input
 			output = JSEngine.getInstance().evalInContext(input, module.context);
 			
-			// print if a variable
-			if (/^[a-zA-Z_$][a-zA-Z_$0-9]*(?:\.[a-zA-Z_$][a-zA-Z_$0-9]*)*$/.test(input.trim())){
+			// print if a variable or output not null
+			if (output != null || 
+				/^[a-zA-Z_$][a-zA-Z_$0-9]*(?:\.[a-zA-Z_$][a-zA-Z_$0-9]*)*$/.test(input.trim())){
 				if (output && typeof output.toString === 'function'){
 					console.println(output.toString());
 				}else{
