@@ -14,4 +14,5 @@ print(m.size());
 print(m.get('s'));
 print(m.get('k'));
 
-print(m.toString());
+print(m);
+
