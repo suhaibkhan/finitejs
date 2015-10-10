@@ -22,7 +22,7 @@ JSEngine.getInstance().addAllLocalVariables(sharedObjects, module.context);
 
 function start(){
 	
-	var input, output;
+	var input, output, promptFormat = '%s ', promptChar = '>>';
 	
 	// print application info
 	console.printAppInfo();
@@ -30,11 +30,7 @@ function start(){
 	// REPL - Read Eval Print Loop
 	while(true){
 		
-		if (input == null || input == ''){
-			console.printf("%s ",">>");
-		}else{
-			console.printf("%n%s ",">>");
-		}
+		console.printf(promptFormat, promptChar);
 		
 		try{
 			input = consoleReader.readLine();
@@ -48,15 +44,18 @@ function start(){
 			// use shell context to parse all input
 			output = JSEngine.getInstance().evalInContext(input, module.context);
 			
-			// output result
-			if (output && typeof output.toString === 'function'){
-				console.print(output.toString());
-			}else{
-				console.print(output);
+			// print if a variable
+			if (/^[a-zA-Z_$][a-zA-Z_$0-9]*(?:\.[a-zA-Z_$][a-zA-Z_$0-9]*)*$/.test(input.trim())){
+				if (output && typeof output.toString === 'function'){
+					console.println(output.toString());
+				}else{
+					console.println(output);
+				}
 			}
+			
 		}catch(ex){
-			ex.printStackTrace();
-			console.error(ex);
+			// ex.printStackTrace();
+			console.errorf("%s%n", ex);
 		}
 	}
 }
