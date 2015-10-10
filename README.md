@@ -13,7 +13,8 @@ cd build/distributions/finitejs-0.1.0
 ```
 #### Test
 ```js
-read.csv('samples/sample.csv');
+var data = read.csv('samples/sample.csv');
+print(data);
 quit();
 ```
 #### Contribute
