@@ -9,8 +9,11 @@ var JSEngine = Java.type('com.finitejs.system.JSEngine');
 // shared across contexts.
 var Map = require('map');
 JSEngine.getInstance().addGlobalVariable('Map', Map);
+var table = require('table');
+JSEngine.getInstance().addGlobalVariable('table', table);
 var read = require('read');
 JSEngine.getInstance().addGlobalVariable('read', read);
+
 
 if (!__shell){
 	// load main file passed as cmd line argument
