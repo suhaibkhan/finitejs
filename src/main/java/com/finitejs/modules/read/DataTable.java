@@ -348,6 +348,10 @@ public class DataTable implements Iterable<List<?>>{
 		
 		List<ColumnType<?>> typeList = findDataTypes(data, predefinedTypeList);
 		
+		if (headerList == null){
+			headerList = new ArrayList<>();
+		}
+		
 		// add column index as default headers
 		if (headerList.size() < typeList.size()){
 			for (int i = headerList.size(); i < typeList.size(); i++){
