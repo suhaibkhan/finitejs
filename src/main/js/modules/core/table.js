@@ -1,8 +1,19 @@
+/**
+ * Table module
+ * @module table
+ */
 
 var DataTable = Java.type('com.finitejs.modules.read.DataTable');
 var ArrayList = Java.type('java.util.ArrayList');
 
-// table constructor can have argument of type DataTable or arrays
+/**
+ * Creates a table instance for storing tabular data.
+ * @class
+ * @private
+ * @ignore
+ * @param {Object[]|Object[][]|com.finitejs.modules.read.DataTable} - table constructor 
+ * can have argument of type DataTable or arrays
+ */
 function Table(args){
 	var i, stringArray, lastArg, typeArray = null, headerArray = null, 
 		validSettingsArgPresent = false, stringArrayList = new ArrayList;
