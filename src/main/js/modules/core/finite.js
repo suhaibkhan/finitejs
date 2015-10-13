@@ -14,6 +14,11 @@ JSEngine.getInstance().addGlobalVariable('table', table);
 var read = require('read');
 JSEngine.getInstance().addGlobalVariable('read', read);
 
+var math = require('math');
+JSEngine.getInstance().addGlobalVariable('abs', math.abs);
+JSEngine.getInstance().addGlobalVariable('max', math.max);
+
+
 
 if (!__shell){
 	// load main file passed as cmd line argument
