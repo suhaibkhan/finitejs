@@ -77,4 +77,15 @@ public class ZonedDateTimeTypeTest {
 		assertNull(type1.parse(null));
 		assertNull(type1.parse(""));
 	}
+	
+	@Test
+	public void testCompare(){
+		ZonedDateTimeType type = ZonedDateTimeType.getType("dd/MM/yyyy HH:mm:ss zzz");
+		
+		assertEquals(-1, type.compareTo(null, type.parse("21/04/2015 23:23:23 Asia/Calcutta")));
+		assertEquals(1, type.compareTo(type.parse("21/04/2015 23:23:23 Asia/Calcutta"), null));
+		assertEquals(0, type.compareTo(type.parse("21/04/2015 23:23:23 Asia/Calcutta"), type.parse("21/04/2015 23:23:23 Asia/Calcutta")));
+		assertEquals(1, type.compareTo(type.parse("21/04/2015 23:24:23 Asia/Calcutta"), type.parse("21/04/2015 23:23:23 Asia/Calcutta")));
+		assertEquals(-1, type.compareTo(type.parse("21/04/2015 22:23:23 Asia/Calcutta"), type.parse("21/04/2015 23:23:23 Asia/Calcutta")));
+	}
 }

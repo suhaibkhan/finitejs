@@ -124,4 +124,14 @@ public class DateTimeTypeTest {
 		assertNull(type1.parse(""));
 	}
 	
+	@Test
+	public void testCompare(){
+		DateTimeType type = DateTimeType.getType("dd/MM/yyyy HH:mm:ss");
+
+		assertEquals(-1, type.compareTo(null, type.parse("21/04/2015 23:23:23")));
+		assertEquals(1, type.compareTo(type.parse("21/04/2015 23:23:23"), null));
+		assertEquals(0, type.compareTo(type.parse("21/04/2015 23:23:23"), type.parse("21/04/2015 23:23:23")));
+		assertTrue(type.compareTo(type.parse("23/04/2015 23:23:23"), type.parse("21/04/2015 23:23:23")) > 0);
+		assertTrue(type.compareTo(type.parse("21/04/2015 23:23:23"), type.parse("28/04/2015 23:23:23")) < 0);
+	}
 }

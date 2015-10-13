@@ -69,4 +69,15 @@ public class NumberTypeTest {
 		assertEquals(10d, type.parse("10"), 0.0);
 		assertEquals(10.2567, type.parse("10.2567"), 0.0);
 	}
+	
+	@Test
+	public void testCompare(){
+		NumberType type = NumberType.getType();
+		
+		assertEquals(-1, type.compareTo(null, 1d));
+		assertEquals(1, type.compareTo(2d, null));
+		assertEquals(0, type.compareTo(2d, 2d));
+		assertEquals(1, type.compareTo(3d, 2d));
+		assertEquals(-1, type.compareTo(2d, 3d));
+	}
 }

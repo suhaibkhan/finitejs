@@ -90,4 +90,15 @@ public class DateTypeTest {
 		assertNull(type1.parse(null));
 		assertNull(type1.parse(""));
 	}
+	
+	@Test
+	public void testCompare(){
+		DateType type = DateType.getType("dd/MM/yyyy");
+		
+		assertEquals(-1, type.compareTo(null, type.parse("21/04/2015")));
+		assertEquals(1, type.compareTo(type.parse("21/04/2015"), null));
+		assertEquals(0, type.compareTo(type.parse("21/04/2015"), type.parse("21/04/2015")));
+		assertTrue(type.compareTo(type.parse("22/04/2015"), type.parse("21/04/2015")) > 0);
+		assertTrue(type.compareTo(type.parse("21/04/2015"), type.parse("24/04/2015")) < 0);
+	}
 }

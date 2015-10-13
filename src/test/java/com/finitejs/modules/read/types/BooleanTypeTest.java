@@ -89,4 +89,15 @@ public class BooleanTypeTest {
 		assertFalse(type2.parse("other"));
 	}
 	
+	@Test
+	public void testCompare(){
+		BooleanType type = BooleanType.getType("true_false");
+		
+		assertEquals(-1, type.compareTo(null, false));
+		assertEquals(1, type.compareTo(false, null));
+		assertEquals(0, type.compareTo(false, false));
+		assertEquals(1, type.compareTo(true, false));
+		assertEquals(-1, type.compareTo(false, true));
+	}
+	
 }

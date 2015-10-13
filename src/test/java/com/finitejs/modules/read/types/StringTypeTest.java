@@ -44,4 +44,15 @@ public class StringTypeTest {
 		assertNull(type.parse(null));
 	}
 	
+	@Test
+	public void testCompare(){
+		StringType type = StringType.getType();
+		
+		assertEquals(-1, type.compareTo(null, "s"));
+		assertEquals(1, type.compareTo("s", null));
+		assertEquals(0, type.compareTo("ss", "ss"));
+		assertEquals(1, type.compareTo("ab", "aa"));
+		assertEquals(-1, type.compareTo("aa", "ab"));
+	}
+	
 }

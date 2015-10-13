@@ -86,4 +86,16 @@ public class TimeTypeTest {
 		assertNull(type1.parse(null));
 		assertNull(type1.parse(""));
 	}
+	
+	@Test
+	public void testCompare(){
+		TimeType type = TimeType.getType("H:m");
+		
+		assertEquals(-1, type.compareTo(null, type.parse("01:01")));
+		assertEquals(1, type.compareTo(type.parse("01:01"), null));
+		assertEquals(0, type.compareTo(type.parse("01:01"), type.parse("01:01")));
+		assertEquals(1, type.compareTo(type.parse("02:01"), type.parse("01:01")));
+		assertEquals(-1, type.compareTo(type.parse("01:01"), type.parse("02:01")));
+	}
+	
 }
