@@ -15,10 +15,7 @@ var read = require('read');
 JSEngine.getInstance().addGlobalVariable('read', read);
 
 var math = require('math');
-JSEngine.getInstance().addGlobalVariable('abs', math.abs);
-JSEngine.getInstance().addGlobalVariable('max', math.max);
-
-
+JSEngine.getInstance().addGlobalVariable('cbrt', math.cbrt);
 
 if (!__shell){
 	// load main file passed as cmd line argument
