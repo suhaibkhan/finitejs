@@ -44,6 +44,24 @@ public class NumberType implements ColumnType<Double>{
 		return false;
 	}
 	
+	@Override
+	public int compareTo(Double a, Double b) {
+		
+		if (a == null && b != null){
+			return -1;
+		}
+		
+		if (a != null && b == null){
+			return 1;
+		}
+		
+		if (a == null && b == null){
+			return 0;
+		}
+		
+		return Double.compare(a, b);
+	}
+	
 	public static NumberType checkAndGetType(String stringValue){
 		NumberType type = null;
 		if (stringValue != null && !stringValue.isEmpty()){

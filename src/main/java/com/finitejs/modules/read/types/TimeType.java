@@ -34,6 +34,24 @@ public class TimeType extends AbstractDateType<LocalTime>{
 		return String.format("%s(%s)", TIME_TYPE, format);
 	}
 	
+	@Override
+	public int compareTo(LocalTime a, LocalTime b) {
+		
+		if (a == null && b != null){
+			return -1;
+		}
+		
+		if (a != null && b == null){
+			return 1;
+		}
+		
+		if (a == null && b == null){
+			return 0;
+		}
+		
+		return a.compareTo(b);
+	}
+	
 	public static TimeType checkAndGetType(String stringValue){
 		
 		TimeType type = null;

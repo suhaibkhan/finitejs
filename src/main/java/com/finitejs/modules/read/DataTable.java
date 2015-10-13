@@ -2,8 +2,11 @@ package com.finitejs.modules.read;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
+import com.finitejs.modules.read.types.NumberType;
 import com.finitejs.modules.read.util.DataTableFormatter;
 
 /**
@@ -11,21 +14,45 @@ import com.finitejs.modules.read.util.DataTableFormatter;
  * Each column in tabular data is an instance of {@link Column} class.
  * Values are stored in {@link Column} instances and are of different type. 
  */
-public class DataTable implements Iterable<List<?>>{
+public class DataTable implements Iterable<List<Object>>{
 	/**
 	 * Constant for default row count while printing in tabular format.
 	 */
 	public static final int DEFAULT_PRINT_LIMIT = 30;
+	
+	/**
+	 * Constant for default index header name
+	 */
+	private static final String DEFAULT_INDEX_HEADER_NAME = "###INDEX###";
 	
 	/** List to store columns */
 	private List<Column<?>> table;
 	
 	/** Number of rows */
 	private int rowCount;
-		
+	
+	/** Index map */
+	private Map<String, List<Integer>> indexMap; 
+	
+	/** Column name - index map */
+	private Map<String, Integer> columnIndexMap;
+	
+	/** Name of the index column */
+	private String indexColumnName;
+	
+	/** Index column */
+	private Column<?> indexColumn;
+	
 	private DataTable(){
 		rowCount = 0;
 		table = new ArrayList<>();
+		indexMap = new LinkedHashMap<>();
+		columnIndexMap = new LinkedHashMap<>();
+		
+		// row index will be index column by default and 
+		// default index type is number
+		indexColumnName = DEFAULT_INDEX_HEADER_NAME;
+		indexColumn = Column.create(DEFAULT_INDEX_HEADER_NAME, NumberType.getType());
 	}
 	
 	/**
@@ -59,15 +86,22 @@ public class DataTable implements Iterable<List<?>>{
 	}
 	
 	/**
+	 * Returns index map used.
+	 * 
+	 * @return index map
+	 */
+	public Map<String, List<Integer>> getIndexMap(){
+		return indexMap;
+	}
+	
+	/**
 	 * Get list of column headers in table.
 	 * 
 	 * @return list of headers
 	 */
 	public List<String> getHeaderList(){
 		List<String> headerList = new ArrayList<>();
-		for (Column<?> column : table){
-			headerList.add(column.getName());
-		}
+		headerList.addAll(columnIndexMap.keySet());
 		return headerList;
 	}
 	
@@ -85,24 +119,16 @@ public class DataTable implements Iterable<List<?>>{
 	}
 	
 	/**
-	 * Returns a string that represents {@code DataTable} type information.
+	 * Returns list of string that represents {@code DataTable} type information.
 	 * 
-	 * @return string representing types of table values
+	 * @return list of string representing types of table values
 	 */
-	public String getType(){
-		StringBuffer typeStrBuffer = new StringBuffer();
-		
-		Iterator<Column<?>> tableItr = table.iterator();
-		while(tableItr.hasNext()){
-			Column<?> column = tableItr.next();
-			typeStrBuffer.append(column.getName().toString());
-			typeStrBuffer.append(":");
-			typeStrBuffer.append(column.getType().toString());
-			if (tableItr.hasNext()){
-				typeStrBuffer.append(", ");
-			}
+	public List<String> getTypeStringList(){
+		List<String> typeStringList = new ArrayList<>();
+		for (Column<?> column : table){
+			typeStringList.add(column.getType().toString());
 		}
-		return typeStrBuffer.toString();
+		return typeStringList;
 	}
 	
 	/**
@@ -119,16 +145,37 @@ public class DataTable implements Iterable<List<?>>{
 		Iterator<Column<?>> tableItr = table.iterator();
 		Iterator<String> rowItr = rowData.iterator();
 		
+		// default index value is row index
+		String indexValue = NumberType.getType().format((double) rowCount);
+		
 		while(tableItr.hasNext()){
 			Column<?> column = tableItr.next();
+			
+			// fill horizontally with null if no value present
+			String rowVal = null;
 			if (rowItr.hasNext()){
-				column.parseAndAdd(rowItr.next());
-			}else{
-				// fill with null
-				column.parseAndAdd(null);
+				rowVal = rowItr.next();
+			}
+			
+			column.parseAndAdd(rowVal);
+			
+			if (indexColumnName.equals(column.getName())){
+				// last added value
+				indexValue = column.getFormattedValue(rowCount);
 			}
 		}
 		
+		// add to default index column
+		if (indexColumnName.equals(DEFAULT_INDEX_HEADER_NAME)){
+			indexColumn.parseAndAdd(indexValue);
+		}
+		
+		// add to index map
+		if (!indexMap.containsKey(indexValue)){
+			indexMap.put(indexValue, new ArrayList<>());
+		}
+		indexMap.get(indexValue).add(rowCount);
+
 		// increase row count
 		rowCount++;
 	}
@@ -140,12 +187,22 @@ public class DataTable implements Iterable<List<?>>{
 	 * @param type  type information, if null column will not be created
 	 * @param columnData   string representations of data to be added to 
 	 * the column, if null columns with empty values will be created
+	 * @throws IllegalArgumentException if duplicate column name
 	 */
 	public void addColumn(String header, ColumnType<?> type, List<String> columnData){
 		
 		if (header == null){
 			// index as header
 			header = String.valueOf(getColumnCount());
+		}
+		
+		if (header.equals(DEFAULT_INDEX_HEADER_NAME)){
+			throw new IllegalArgumentException(
+					String.format("Cannot use %s as column name.", DEFAULT_INDEX_HEADER_NAME));
+		}
+		
+		if (columnIndexMap.containsKey(header)){
+			throw new IllegalArgumentException("Column names must be unique.");
 		}
 		
 		Column<?> column = Column.create(header, type);
@@ -159,17 +216,40 @@ public class DataTable implements Iterable<List<?>>{
 			columnItr = columnData.iterator();
 		}
 		
+		boolean isIndexColumn = false;
+		if (indexColumnName.equals(header)){
+			// update index column reference
+			indexColumn = column;
+			isIndexColumn = true;
+		}
+		
 		for (int i = 0; i < rowCount; i++){
+			
+			// fill vertically with null if no value present
+			String colVal = null;
 			if (columnItr != null && columnItr.hasNext()){
-				column.parseAndAdd(columnItr.next());
-			}else{
-				// fill with null
-				column.parseAndAdd(null);
+				colVal = columnItr.next();
+			}
+			
+			column.parseAndAdd(colVal);
+			
+			// if this column is an index column
+			// then each row must be added to index map also
+			if (isIndexColumn){
+				String indexValue = column.getFormattedValue(i);
+				
+				if (!indexMap.containsKey(indexValue)){
+					indexMap.put(indexValue, new ArrayList<>());
+				}
+				indexMap.get(indexValue).add(i);
 			}
 		}
 		
 		// add new column to table
 		table.add(column);
+		
+		// add column to column-index map
+		columnIndexMap.put(header, table.size() - 1);
 	}
 	
 	/**
@@ -189,7 +269,7 @@ public class DataTable implements Iterable<List<?>>{
 	 * Returns an iterator over rows of table.
 	 */
 	@Override
-	public Iterator<List<?>> iterator() {
+	public Iterator<List<Object>> iterator() {
 		return new DataTableIterator(this);
 	}
 	
@@ -201,7 +281,7 @@ public class DataTable implements Iterable<List<?>>{
 	 * by the iterator {@code next()} method
 	 * @return a row iterator starting at the specified index
 	 */
-	public Iterator<List<?>> iterator(int rowIndex) {
+	public Iterator<List<Object>> iterator(int rowIndex) {
 		return new DataTableIterator(this, rowIndex);
 	}
 	
@@ -214,7 +294,7 @@ public class DataTable implements Iterable<List<?>>{
 	 * @param limit  number of rows to be returned by the iterator
 	 * @return a row iterator starting at the specified index with limit
 	 */
-	public Iterator<List<?>> iterator(int rowIndex, int limit) {
+	public Iterator<List<Object>> iterator(int rowIndex, int limit) {
 		return new DataTableIterator(this, rowIndex, limit);
 	}
 	
@@ -285,19 +365,154 @@ public class DataTable implements Iterable<List<?>>{
 	}
 	
 	/**
+	 * Sorts {@code DataTable} with respect to the specified column name.
+	 * 
+	 * @param columnName  name of the column which specifies the sorting order
+	 * @param sortOrder  sorting direction {@link Column.SORT_ORDER_ASC} or {@link Column.SORT_ORDER_DESC}
+	 * @throws IllegalArgumentException if invalid column name
+	 */
+	public void sort(String columnName, String sortOrder){
+		
+		// check for column
+		if (columnName == null || !columnIndexMap.containsKey(columnName)){
+			throw new IllegalArgumentException("Invalid column name");
+		}
+		
+		String prevIndexColumn = null;
+		if (!columnName.equals(indexColumnName)){
+			// change index
+			prevIndexColumn = indexColumnName;
+			index(columnName);
+		}
+		
+		// sort based on current index
+		List<String> sortedIndexValues = indexColumn.sort(sortOrder);
+		
+		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
+		for (String indexValue : sortedIndexValues){
+			newIndexMap.put(indexValue, indexMap.get(indexValue));
+		}
+		
+		indexMap = newIndexMap;
+		
+		if (prevIndexColumn != null){
+			// change index back to previous index
+			index(prevIndexColumn);
+		}
+		
+	}
+	
+	/**
+	 * Get list of string representation of column values.
+	 * @param columnName  name of the column
+	 * @return string representation of column values
+	 * @throws IllegalArgumentException if invalid column name
+	 */
+	public List<String> getColumn(String columnName){
+		
+		// check for column
+		if (columnName == null || !columnIndexMap.containsKey(columnName)){
+			throw new IllegalArgumentException("Invalid column name");
+		}
+		
+		List<String> columnStrValues = new ArrayList<>();
+		Column<?> column = table.get(columnIndexMap.get(columnName));
+		
+		Iterator<String> indexIterator = indexMap.keySet().iterator();
+		Iterator<Integer> rowIndexIterator = null;
+		
+		while(indexIterator.hasNext()){
+			
+			if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
+				rowIndexIterator = indexMap.get(indexIterator.next()).iterator();
+			}
+			
+			int nextRowIndex = rowIndexIterator.next();
+			
+			columnStrValues.add(column.getFormattedValue(nextRowIndex));
+		}
+		
+		return columnStrValues;
+	}
+	
+	/**
+	 * Change index column of the {@code DataTable}.
+	 * 
+	 * @param columnName  name of the new index column
+	 * @throws IllegalArgumentException if invalid column name
+	 */
+	public void index(String columnName){
+		// check for column
+		if (columnName == null || (!columnIndexMap.containsKey(columnName) && 
+				!columnName.equals(DEFAULT_INDEX_HEADER_NAME))){
+			throw new IllegalArgumentException("Invalid column name");
+		}
+		
+		// create a new index map
+		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
+		
+		Column<?> column = null;
+		if (columnName.equals(DEFAULT_INDEX_HEADER_NAME)){
+			// create default row index based index column
+			column = Column.create(DEFAULT_INDEX_HEADER_NAME, NumberType.getType());
+			for (int i = 0; i < rowCount; i++){
+				column.parseAndAdd(String.valueOf(i));
+			}
+		}else{
+			column = table.get(columnIndexMap.get(columnName));
+		}
+		
+		// iterate through existing index to find values 
+		// of new column in current order
+		Iterator<String> indexIterator = indexMap.keySet().iterator();
+		Iterator<Integer> rowIndexIterator = null;
+		
+		while(indexIterator.hasNext()){
+			
+			if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
+				rowIndexIterator = indexMap.get(indexIterator.next()).iterator();
+			}
+			
+			int nextRowIndex = rowIndexIterator.next();
+			String columnStrVal = column.getFormattedValue(nextRowIndex);
+			if (!newIndexMap.containsKey(columnStrVal)){
+				newIndexMap.put(columnStrVal, new ArrayList<>());
+			}
+			newIndexMap.get(columnStrVal).add(nextRowIndex);
+		}
+		
+		// update index
+		indexMap = newIndexMap;
+		indexColumn = column;
+		indexColumnName = columnName;
+	}
+	
+	/**
 	 * Creates a new {@code DataTable} instance with given header list, 
 	 * type list and data as list of list.
 	 * 
 	 * @param data  tabular data as list of rows and each 
 	 * row as list of string values
-	 * @param typeList  column types
-	 * @param headerList  column header names
+	 * @param typeList  column types, cannot be empty or null
+	 * @param headerList  column header names, cannot be empty or null
+	 * @param indexColumn  name/header of the column to be used as index
 	 * @return {@code DataTable} instance
+	 * @throws IllegalArgumentException if empty type list or header list
 	 */
 	public static DataTable getTable(List<List<String>> data, 
-			List<ColumnType<?>> typeList, List<String> headerList){
+			List<ColumnType<?>> typeList, List<String> headerList, String indexColumnName){
 		
 		DataTable table = new DataTable();
+		
+		// set index column
+		if (indexColumnName != null){
+			table.indexColumnName = indexColumnName;
+		}
+		
+		if (typeList == null || headerList == null || 
+				typeList.isEmpty() || headerList.isEmpty()){
+			throw new IllegalArgumentException("Type list or header list cannot be empty");
+		}
 		
 		// create columns
 		Iterator<String> headerItr = headerList.iterator();
@@ -330,12 +545,16 @@ public class DataTable implements Iterable<List<?>>{
 	 * 
 	 * @param data  tabular data as list of rows and each 
 	 * row as list of string values.
-	 * @param typeStringList  list of string representation of types in column order
-	 * @param headerList  list of column headers
+	 * @param typeStringList  list of string representation of types in 
+	 * column order, or null if no predefined types and types will be determined dynamically
+	 * @param headerList  list of column headers, or null if no predefined 
+	 * headers and column indexes will be used as headers
+	 * @param indexColumn  name/header of the column to be used as index
 	 * @return {@code DataTable} instance
+	 * @throws IllegalArgumentException if not able to determine type
 	 */
 	public static DataTable getTableWithTypeStrings(List<List<String>> data, 
-			List<String> typeStringList, List<String> headerList){
+			List<String> typeStringList, List<String> headerList, String indexColumn){
 		
 		List<ColumnType<?>> predefinedTypeList = new ArrayList<>();
 		
@@ -362,32 +581,7 @@ public class DataTable implements Iterable<List<?>>{
 			}
 		}
 		
-		return getTable(data, typeList, headerList);
-	}
-	
-	/**
-	 * Creates a new {@code DataTable} instance with given tabular data.
-	 * 
-	 * @param data  tabular data as list of rows and each 
-	 * row as list of string values
-	 * @return {@code DataTable} instance
-	 */
-	public static DataTable getTable(List<List<String>> data){
-		
-		// dynamically find column type
-		List<ColumnType<?>> typeList = findDataTypes(data, null);
-		if (typeList.size() == 0){
-			throw new IllegalArgumentException("Not able to determine type of data");
-		}
-		
-		List<String> headerList = new ArrayList<>();
-		
-		// add column index default header
-		for (int i = 0; i < typeList.size(); i++){
-			headerList.add(String.valueOf(i));
-		}
-		
-		return getTable(data, typeList, headerList);
+		return getTable(data, typeList, headerList, indexColumn);
 	}
 	
 	/**

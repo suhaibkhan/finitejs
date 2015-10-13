@@ -33,6 +33,24 @@ public class StringType implements ColumnType<String>{
 		return false;
 	}
 	
+	@Override
+	public int compareTo(String a, String b) {
+		
+		if (a == null && b != null){
+			return -1;
+		}
+		
+		if (a != null && b == null){
+			return 1;
+		}
+		
+		if (a == null && b == null){
+			return 0;
+		}
+		
+		return a.compareTo(b);
+	}
+	
 	public static StringType getType(){
 		return new StringType();
 	}

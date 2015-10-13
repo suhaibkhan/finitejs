@@ -34,6 +34,24 @@ public class ZonedDateTimeType extends AbstractDateType<ZonedDateTime>{
 		return String.format("%s(%s)", ZONEDDATETIME_TYPE, format);
 	}
 	
+	@Override
+	public int compareTo(ZonedDateTime a, ZonedDateTime b) {
+		
+		if (a == null && b != null){
+			return -1;
+		}
+		
+		if (a != null && b == null){
+			return 1;
+		}
+		
+		if (a == null && b == null){
+			return 0;
+		}
+		
+		return a.compareTo(b);
+	}
+	
 	public static ZonedDateTimeType checkAndGetType(String stringValue){
 		
 		ZonedDateTimeType type = null;

@@ -73,6 +73,14 @@ public interface ColumnType<T> {
 	 */
 	public String toString();
 	
+	/**
+	 * Compares two values of the column type.
+	 * 
+	 * @param a  first value
+	 * @param b  second value
+	 * @return comparison result
+	 */
+	public int compareTo(T a, T b);
 	
 	//=================================================//
 	//  Static methods inside interface are supported  //

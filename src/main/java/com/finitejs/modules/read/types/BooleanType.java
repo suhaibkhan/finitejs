@@ -94,6 +94,24 @@ public class BooleanType implements ColumnType<Boolean>{
 		return String.format("%s(%s)", BOOLEAN_TYPE, category.toString());
 	}
 	
+	@Override
+	public int compareTo(Boolean a, Boolean b) {
+		
+		if (a == null && b != null){
+			return -1;
+		}
+		
+		if (a != null && b == null){
+			return 1;
+		}
+		
+		if (a == null && b == null){
+			return 0;
+		}
+		
+		return (a.booleanValue() == b.booleanValue()) ? 0 : (a.booleanValue() ? 1 : -1);
+	}
+	
 	/**
 	 * Checks whether given string is a compatible {@code BooleanType}.
 	 * 

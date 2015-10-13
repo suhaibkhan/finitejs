@@ -12,6 +12,16 @@ import java.util.ListIterator;
  */
 public class Column<T> implements Iterable<T>{
 	
+	/**
+	 * Constant that represents ascending sorting direction.
+	 */
+	public static final String SORT_ORDER_ASC = "asc";
+	
+	/**
+	 * Constant that represents descending sorting direction.
+	 */
+	public static final String SORT_ORDER_DESC = "desc";
+	
 	/** Column header name */
 	private String name;
 	
@@ -160,4 +170,32 @@ public class Column<T> implements Iterable<T>{
 		return new FormattedColumnIterator<T>(this, index);
 	}
 	
+	/**
+	 * Sorts the column values and returns the sorted values as a new list.
+	 * Will not update existing list.
+	 * 
+	 * @param sortOrder  direction of sorting, if invalid order 
+	 * then sorted in ascending direction by default
+	 * @return sorted column values list
+	 */
+	public List<String> sort(String sortOrder){
+		
+		List<String> columnValues = new ArrayList<>();
+		List<T> copy = new ArrayList<>(column);
+		// sorts using lambda expression
+		copy.sort((a, b) -> type.compareTo(a, b));
+		
+		if (SORT_ORDER_DESC.equals(sortOrder)){
+			// reverse order
+			for (int i = copy.size() - 1; i >= 0; i--){
+				columnValues.add(type.format(copy.get(i)));
+			}
+		}else{
+			for (T val : copy){
+				columnValues.add(type.format(val));
+			}
+		}
+		
+		return columnValues;
+	}
 }

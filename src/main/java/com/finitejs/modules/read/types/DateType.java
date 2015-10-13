@@ -30,6 +30,24 @@ public class DateType extends AbstractDateType<LocalDate>{
 		return String.format("%s(%s)", DATE_TYPE, format);
 	}
 	
+	@Override
+	public int compareTo(LocalDate a, LocalDate b) {
+		
+		if (a == null && b != null){
+			return -1;
+		}
+		
+		if (a != null && b == null){
+			return 1;
+		}
+		
+		if (a == null && b == null){
+			return 0;
+		}
+		
+		return a.compareTo(b);
+	}
+	
 	public static DateType checkAndGetType(String stringValue){
 		
 		DateType type = null;

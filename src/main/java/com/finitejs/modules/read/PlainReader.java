@@ -338,7 +338,8 @@ public class PlainReader {
 			}
 		}
 		
-		DataTable dTable = DataTable.getTable(csvData, typeList, headerList);
+		// index null, default will be taken
+		DataTable dTable = DataTable.getTable(csvData, typeList, headerList, null);
 		
 		return dTable;
 	}
