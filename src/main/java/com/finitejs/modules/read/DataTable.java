@@ -34,6 +34,9 @@ public class DataTable implements Iterable<List<Object>>{
 	/** Index map */
 	private Map<String, List<Integer>> indexMap; 
 	
+	/** List that maps index map order to row index */
+	private List<Integer> indexOrderList;
+	
 	/** Column name - index map */
 	private Map<String, Integer> columnIndexMap;
 	
@@ -47,6 +50,7 @@ public class DataTable implements Iterable<List<Object>>{
 		rowCount = 0;
 		table = new ArrayList<>();
 		indexMap = new LinkedHashMap<>();
+		indexOrderList = new ArrayList<>();
 		columnIndexMap = new LinkedHashMap<>();
 		
 		// row index will be index column by default and 
@@ -92,6 +96,18 @@ public class DataTable implements Iterable<List<Object>>{
 	 */
 	public Map<String, List<Integer>> getIndexMap(){
 		return indexMap;
+	}
+	
+	/**
+	 * Returns index order list. 
+	 * Index order list maps current table order to original data row order.
+	 * n<sup>th</sup> element in index order list returns the 
+	 * internal data row index corresponding to n<sup>th</sup> row of table.
+	 * 
+	 * @return index order list
+	 */
+	public List<Integer> getIndexOrderList(){
+		return indexOrderList;
 	}
 	
 	/**
@@ -176,6 +192,9 @@ public class DataTable implements Iterable<List<Object>>{
 		}
 		indexMap.get(indexValue).add(rowCount);
 
+		// update index order
+		indexOrderList.add(rowCount);
+		
 		// increase row count
 		rowCount++;
 	}
@@ -263,6 +282,184 @@ public class DataTable implements Iterable<List<Object>>{
 	public void addColumn(String header, String typeString, List<String> columnData){
 		ColumnType<?> type = ColumnType.getType(typeString);
 		addColumn(header, type, columnData);
+	}
+	
+	/**
+	 * Get specified row elements.
+	 * 
+	 * @param rowIndex  index of the specified row
+	 * @return row values
+	 * @throws IndexOutOfBoundsException if row index out of range
+	 */
+	public List<Object> getRow(int rowIndex){
+		List<Object> rowValues = new ArrayList<>();
+		int dataIndex = indexOrderList.get(rowIndex);
+		for (Column<?> column : table){
+			rowValues.add(column.get(dataIndex));
+		}
+		return rowValues;
+	}
+	
+	/**
+	 * Get string representations of specified row elements.
+	 * 
+	 * @param rowIndex  index of the specified row
+	 * @return string representations of row values
+	 * @throws IndexOutOfBoundsException if row index out of range
+	 */
+	public List<String> getFormattedRow(int rowIndex){
+		List<String> formattedRowValues = new ArrayList<>();
+		int dataIndex = indexOrderList.get(rowIndex);
+		for (Column<?> column : table){
+			formattedRowValues.add(column.getFormattedValue(dataIndex));
+		}
+		return formattedRowValues;
+	}
+	
+	/**
+	 * Get specified column elements.
+	 * 
+	 * @param colIndex  index of the specified column
+	 * @return column values
+	 * @throws IndexOutOfBoundsException if column index out of range
+	 */
+	public List<Object> getColumn(int colIndex){
+		List<Object> colValues = new ArrayList<>();
+		Column<?> column = table.get(colIndex);
+		
+		// get values in correct order
+		indexOrderList.forEach(i -> colValues.add(column.get(i)));
+		
+		return colValues;
+	}
+	
+	/**
+	 * Get string representations of specified column values.
+	 * 
+	 * @param colIndex  index of the specified column
+	 * @return string representation of column values
+	 * @throws IndexOutOfBoundsException if column index out of range
+	 */
+	public List<String> getFormattedColumn(int colIndex){
+		
+		List<String> columnStrValues = new ArrayList<>();
+		Column<?> column = table.get(colIndex);
+		
+		// get values in correct order
+		indexOrderList.forEach(i -> columnStrValues.add(column.getFormattedValue(i)));
+		
+		return columnStrValues;
+	}
+	
+	/**
+	 * Sorts {@code DataTable} with respect to the specified column name.
+	 * 
+	 * @param columnName  name of the column which specifies the sorting order
+	 * @param sortOrder  sorting direction {@link Column.SORT_ORDER_ASC} or {@link Column.SORT_ORDER_DESC}
+	 * @throws IllegalArgumentException if invalid column name
+	 */
+	public void sort(String columnName, String sortOrder){
+		
+		// check for column
+		if (columnName == null || !columnIndexMap.containsKey(columnName)){
+			throw new IllegalArgumentException("Invalid column name");
+		}
+		
+		String prevIndexColumn = null;
+		if (!columnName.equals(indexColumnName)){
+			// change index
+			prevIndexColumn = indexColumnName;
+			index(columnName);
+		}
+		
+		// sort based on current index
+		List<String> sortedIndexValues = indexColumn.sort(sortOrder);
+		
+		// clear existing order
+		indexOrderList.clear();
+		
+		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
+		sortedIndexValues.stream().distinct().forEach(v -> {
+			newIndexMap.put(v, indexMap.get(v));
+			// new order
+			indexOrderList.addAll(indexMap.get(v));
+		});
+		
+		indexMap = newIndexMap;
+		
+		if (prevIndexColumn != null){
+			// change index back to previous index
+			index(prevIndexColumn);
+		}
+		
+	}
+	
+	/**
+	 * Sorts {@code DataTable} with respect to the specified column index.
+	 * 
+	 * @param colIndex  index of the specified column
+	 * @param sortOrder  sorting direction {@link Column.SORT_ORDER_ASC} or {@link Column.SORT_ORDER_DESC}
+	 * @throws IndexOutOfBoundsException if column index out of range
+	 */
+	public void sort(int colIndex, String sortOrder){
+		String columnName = table.get(colIndex).getName();
+		sort(columnName, sortOrder);
+	}
+	
+	/**
+	 * Change index column of the {@code DataTable}.
+	 * 
+	 * @param columnName  name of the new index column
+	 * @throws IllegalArgumentException if invalid column name
+	 */
+	public void index(String columnName){
+		// check for column
+		if (columnName == null || (!columnIndexMap.containsKey(columnName) && 
+				!columnName.equals(DEFAULT_INDEX_HEADER_NAME))){
+			throw new IllegalArgumentException("Invalid column name");
+		}
+		
+		Column<?> column = null;
+		if (columnName.equals(DEFAULT_INDEX_HEADER_NAME)){
+			// create default row index based index column
+			column = Column.create(DEFAULT_INDEX_HEADER_NAME, NumberType.getType());
+			for (int i = 0; i < rowCount; i++){
+				column.parseAndAdd(String.valueOf(i));
+			}
+		}else{
+			column = table.get(columnIndexMap.get(columnName));
+		}
+		
+		// create a new index map
+		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
+		
+		// iterate through existing index order to find values 
+		// of new column in current order
+		for (int nextRowIndex : indexOrderList){
+			
+			String columnStrVal = column.getFormattedValue(nextRowIndex);
+			if (!newIndexMap.containsKey(columnStrVal)){
+				newIndexMap.put(columnStrVal, new ArrayList<>());
+			}
+			
+			newIndexMap.get(columnStrVal).add(nextRowIndex);
+		}
+		
+		// update index
+		indexMap = newIndexMap;
+		indexColumn = column;
+		indexColumnName = columnName;
+	}
+	
+	/**
+	 * Change index column of the {@code DataTable} to specified column.
+	 * 
+	 * @param colIndex  index of the specified column
+	 * @throws IndexOutOfBoundsException if column index out of range
+	 */
+	public void index(int colIndex){
+		String columnName = table.get(colIndex).getName();
+		index(columnName);
 	}
 	
 	/**
@@ -362,127 +559,6 @@ public class DataTable implements Iterable<List<Object>>{
 	 */
 	public String toString(int startIndex, int limit){
 		return DataTableFormatter.formatToTable(this, startIndex, limit);
-	}
-	
-	/**
-	 * Sorts {@code DataTable} with respect to the specified column name.
-	 * 
-	 * @param columnName  name of the column which specifies the sorting order
-	 * @param sortOrder  sorting direction {@link Column.SORT_ORDER_ASC} or {@link Column.SORT_ORDER_DESC}
-	 * @throws IllegalArgumentException if invalid column name
-	 */
-	public void sort(String columnName, String sortOrder){
-		
-		// check for column
-		if (columnName == null || !columnIndexMap.containsKey(columnName)){
-			throw new IllegalArgumentException("Invalid column name");
-		}
-		
-		String prevIndexColumn = null;
-		if (!columnName.equals(indexColumnName)){
-			// change index
-			prevIndexColumn = indexColumnName;
-			index(columnName);
-		}
-		
-		// sort based on current index
-		List<String> sortedIndexValues = indexColumn.sort(sortOrder);
-		
-		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
-		sortedIndexValues.forEach(v -> newIndexMap.put(v, indexMap.get(v)));
-		
-		indexMap = newIndexMap;
-		
-		if (prevIndexColumn != null){
-			// change index back to previous index
-			index(prevIndexColumn);
-		}
-		
-	}
-	
-	/**
-	 * Get list of string representation of column values.
-	 * @param columnName  name of the column
-	 * @return string representation of column values
-	 * @throws IllegalArgumentException if invalid column name
-	 */
-	public List<String> getColumn(String columnName){
-		
-		// check for column
-		if (columnName == null || !columnIndexMap.containsKey(columnName)){
-			throw new IllegalArgumentException("Invalid column name");
-		}
-		
-		List<String> columnStrValues = new ArrayList<>();
-		Column<?> column = table.get(columnIndexMap.get(columnName));
-		
-		Iterator<String> indexIterator = indexMap.keySet().iterator();
-		Iterator<Integer> rowIndexIterator = null;
-		
-		while(indexIterator.hasNext()){
-			
-			if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
-				rowIndexIterator = indexMap.get(indexIterator.next()).iterator();
-			}
-			
-			int nextRowIndex = rowIndexIterator.next();
-			
-			columnStrValues.add(column.getFormattedValue(nextRowIndex));
-		}
-		
-		return columnStrValues;
-	}
-	
-	/**
-	 * Change index column of the {@code DataTable}.
-	 * 
-	 * @param columnName  name of the new index column
-	 * @throws IllegalArgumentException if invalid column name
-	 */
-	public void index(String columnName){
-		// check for column
-		if (columnName == null || (!columnIndexMap.containsKey(columnName) && 
-				!columnName.equals(DEFAULT_INDEX_HEADER_NAME))){
-			throw new IllegalArgumentException("Invalid column name");
-		}
-		
-		// create a new index map
-		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
-		
-		Column<?> column = null;
-		if (columnName.equals(DEFAULT_INDEX_HEADER_NAME)){
-			// create default row index based index column
-			column = Column.create(DEFAULT_INDEX_HEADER_NAME, NumberType.getType());
-			for (int i = 0; i < rowCount; i++){
-				column.parseAndAdd(String.valueOf(i));
-			}
-		}else{
-			column = table.get(columnIndexMap.get(columnName));
-		}
-		
-		// iterate through existing index to find values 
-		// of new column in current order
-		Iterator<String> indexIterator = indexMap.keySet().iterator();
-		Iterator<Integer> rowIndexIterator = null;
-		
-		while(indexIterator.hasNext()){
-			
-			if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
-				rowIndexIterator = indexMap.get(indexIterator.next()).iterator();
-			}
-			
-			int nextRowIndex = rowIndexIterator.next();
-			String columnStrVal = column.getFormattedValue(nextRowIndex);
-			if (!newIndexMap.containsKey(columnStrVal)){
-				newIndexMap.put(columnStrVal, new ArrayList<>());
-			}
-			newIndexMap.get(columnStrVal).add(nextRowIndex);
-		}
-		
-		// update index
-		indexMap = newIndexMap;
-		indexColumn = column;
-		indexColumnName = columnName;
 	}
 	
 	/**

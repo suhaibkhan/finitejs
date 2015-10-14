@@ -3,7 +3,6 @@ package com.finitejs.modules.read;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Iterator for table rows.
@@ -16,14 +15,8 @@ public class DataTableIterator implements Iterator<List<Object>>{
 	/** Current iterator position */
 	private int position;
 	
-	/** Index map of {@code DataTable} */
-	private Map<String, List<Integer>> tableIndexMap;
-	
-	/** Index iterator */
-	private Iterator<String> indexIterator;
-	
-	/** Iterator for list of row indices inside index map */
-	private Iterator<Integer> rowIndexIterator;
+	/** Iterator for index order list of {@code DataTable}*/
+	private Iterator<Integer> tableIndexOrderIterator;
 	
 	/** List of columns */
 	private List<Column<?>> columnList;
@@ -47,21 +40,11 @@ public class DataTableIterator implements Iterator<List<Object>>{
 		limit += startIndex;
 		this.limit = limit < table.getRowCount() ? limit : table.getRowCount();
 		
-		// get index
-		tableIndexMap = table.getIndexMap();
-		indexIterator = tableIndexMap.keySet().iterator();
+		// get index order iterator
+		tableIndexOrderIterator = table.getIndexOrderList().listIterator(startIndex);
 		
 		// get column list
 		columnList = table.getColumnList();
-		
-		// skip indexIterator until startIndex 
-		// O(startIndex) operation
-		for (int i = 0; i < startIndex; i++){
-			if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
-				rowIndexIterator = tableIndexMap.get(indexIterator.next()).iterator();
-			}
-			rowIndexIterator.next();
-		}
 	}
 	
 	@Override
@@ -75,11 +58,7 @@ public class DataTableIterator implements Iterator<List<Object>>{
 	@Override
 	public List<Object> next() {
 		
-		if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
-			rowIndexIterator = tableIndexMap.get(indexIterator.next()).iterator();
-		}
-		
-		int nextRowIndex = rowIndexIterator.next();
+		int nextRowIndex = tableIndexOrderIterator.next();
 		
 		List<Object> rowData = new ArrayList<>();
 		for (Column<?> column : columnList){

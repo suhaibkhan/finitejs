@@ -3,7 +3,6 @@ package com.finitejs.modules.read;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Iterator for formatted string representation of table rows.
@@ -18,14 +17,8 @@ public class FormattedDataTableIterator implements Iterator<List<String>>{
 	/** Iterator row count limit */
 	private int limit;
 	
-	/** Index map of {@code DataTable} */
-	private Map<String, List<Integer>> tableIndexMap;
-	
-	/** Index iterator */
-	private Iterator<String> indexIterator;
-	
-	/** Iterator for list of row indices inside index map */
-	private Iterator<Integer> rowIndexIterator;
+	/** Iterator for index order list of {@code DataTable}*/
+	private Iterator<Integer> tableIndexOrderIterator;
 	
 	/** List of columns */
 	private List<Column<?>> columnList;
@@ -49,22 +42,11 @@ public class FormattedDataTableIterator implements Iterator<List<String>>{
 		limit += startIndex;
 		this.limit = limit < table.getRowCount() ? limit : table.getRowCount();
 		
-		// get index
-		tableIndexMap = table.getIndexMap();
-		indexIterator = tableIndexMap.keySet().iterator();
+		// get index order iterator
+		tableIndexOrderIterator = table.getIndexOrderList().listIterator(startIndex);
 		
 		// get column list
 		columnList = table.getColumnList();
-		
-		// skip indexIterator until startIndex 
-		// O(startIndex) operation
-		for (int i = 0; i < startIndex; i++){
-			if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
-				rowIndexIterator = tableIndexMap.get(indexIterator.next()).iterator();
-			}
-			rowIndexIterator.next();
-		}
-		
 	}
 	
 	@Override
@@ -78,12 +60,8 @@ public class FormattedDataTableIterator implements Iterator<List<String>>{
 	@Override
 	public List<String> next() {
 		
-		if (rowIndexIterator == null || !rowIndexIterator.hasNext()){
-			rowIndexIterator = tableIndexMap.get(indexIterator.next()).iterator();
-		}
+		int nextRowIndex = tableIndexOrderIterator.next();
 		
-		int nextRowIndex = rowIndexIterator.next();
-				
 		List<String> rowData = new ArrayList<>();
 		for (Column<?> column : columnList){
 			// get from column is an operation with complexity O(1)
