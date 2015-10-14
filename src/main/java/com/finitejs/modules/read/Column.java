@@ -101,6 +101,15 @@ public class Column<T> implements Iterable<T>{
 	}
 	
 	/**
+	 * Returns list of formatted string representation of column elements.
+	 * 
+	 * @return list of string representations
+	 */
+	public List<String> getFormattedValues(){
+		return column.stream().map(v -> type.format(v)).collect(Collectors.toList());
+	}
+	
+	/**
 	 * Get header name of the column.
 	 * 
 	 * @return header name
