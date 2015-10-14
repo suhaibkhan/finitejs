@@ -14,4 +14,12 @@ public class Stat {
         return stats.getMean();
     }
 
+    public static double std(double[] values) {
+        SummaryStatistics stats = new SummaryStatistics();
+        Arrays.stream(values).forEach(value -> {
+            stats.addValue(value);
+        });
+        return stats.getStandardDeviation();
+    }
+
 }

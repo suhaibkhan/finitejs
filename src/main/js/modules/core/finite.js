@@ -20,6 +20,7 @@ JSEngine.getInstance().addGlobalVariable('cbrt', math.cbrt);
 
 var stat = require('stat');
 JSEngine.getInstance().addGlobalVariable('mean', stat.mean);
+JSEngine.getInstance().addGlobalVariable('std', stat.std);
 
 if (!__shell){
 	// load main file passed as cmd line argument
