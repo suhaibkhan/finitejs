@@ -1,9 +1,11 @@
 package com.finitejs.modules.read;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.stream.Collectors;
 
 /**
  * Class represents a column in {@link DataTable}.
@@ -73,6 +75,15 @@ public class Column<T> implements Iterable<T>{
 	 */
 	public T get(int index){
 		return column.get(index);
+	}
+	
+	/**
+	 * Returns column values as list.
+	 * 
+	 * @return column values
+	 */
+	public List<T> get(){
+		return column;
 	}
 	
 	/**
@@ -180,21 +191,19 @@ public class Column<T> implements Iterable<T>{
 	 */
 	public List<String> sort(String sortOrder){
 		
-		List<String> columnValues = new ArrayList<>();
-		List<T> copy = new ArrayList<>(column);
-		// sorts using lambda expression
-		copy.sort((a, b) -> type.compareTo(a, b));
+		// sorts using lambda expression and streams
 		
+		Comparator<T> comparator = (a, b) -> type.compareTo(a, b);
 		if (SORT_ORDER_DESC.equals(sortOrder)){
 			// reverse order
-			for (int i = copy.size() - 1; i >= 0; i--){
-				columnValues.add(type.format(copy.get(i)));
-			}
-		}else{
-			for (T val : copy){
-				columnValues.add(type.format(val));
-			}
+			comparator = comparator.reversed();
 		}
+		
+		List<String> columnValues = column
+				.stream()
+				.sorted(comparator)
+				.map(v -> type.format(v))
+				.collect(Collectors.toList());
 		
 		return columnValues;
 	}

@@ -389,9 +389,7 @@ public class DataTable implements Iterable<List<Object>>{
 		List<String> sortedIndexValues = indexColumn.sort(sortOrder);
 		
 		Map<String, List<Integer>> newIndexMap = new LinkedHashMap<>();
-		for (String indexValue : sortedIndexValues){
-			newIndexMap.put(indexValue, indexMap.get(indexValue));
-		}
+		sortedIndexValues.forEach(v -> newIndexMap.put(v, indexMap.get(v)));
 		
 		indexMap = newIndexMap;
 		
