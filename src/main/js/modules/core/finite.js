@@ -17,6 +17,10 @@ JSEngine.getInstance().addGlobalVariable('read', read);
 var math = require('math');
 JSEngine.getInstance().addGlobalVariable('cbrt', math.cbrt);
 
+
+var stat = require('stat');
+JSEngine.getInstance().addGlobalVariable('mean', stat.mean);
+
 if (!__shell){
 	// load main file passed as cmd line argument
 	require(__mainfile, true);

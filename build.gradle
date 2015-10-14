@@ -16,6 +16,8 @@ repositories {
 
 dependencies {
   // compile 'org.mapdb:mapdb:2.0-beta7'
+  compile 'org.apache.commons:commons-math3:3.5'
+
   testCompile 'junit:junit:4.12'
 }
 
