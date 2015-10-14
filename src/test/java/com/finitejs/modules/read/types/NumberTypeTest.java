@@ -51,7 +51,7 @@ public class NumberTypeTest {
 		
 		NumberType type = NumberType.getType();
 		
-		assertEquals("10.0", type.format(10d));
+		assertEquals("10", type.format(10d));
 		assertEquals("10.22", type.format(10.22));
 		assertEquals("", type.format(null));
 	}

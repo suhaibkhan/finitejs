@@ -26,7 +26,11 @@ public class NumberType implements ColumnType<Double>{
 	public String format(Double value) {
 		String stringValue = "";
 		if (value != null){
-			stringValue = String.valueOf(value);
+			if (value == value.longValue()){
+				stringValue = String.valueOf(value.longValue());
+			}else{
+				stringValue = String.valueOf(value);
+			}
 		}
 		return stringValue;
 	}
