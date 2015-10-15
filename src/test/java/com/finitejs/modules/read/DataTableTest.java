@@ -45,17 +45,17 @@ public class DataTableTest {
 	
 	@Test
 	public void testGetHeaderList(){
-		assertArrayEquals(new String[]{"Date", "Item", "Sales Count"}, table.getHeaderList().toArray());
+		assertArrayEquals(new String[]{"Date", "Item", "Sales Count"}, table.getNames().toArray());
 	}
 	
 	@Test
 	public void testGetTypeList(){
-		assertEquals(ColumnType.getType("date(y-M-d)"), table.getTypeList().get(0));
+		assertEquals(ColumnType.getType("date(y-M-d)"), table.getTypes().get(0));
 	}
 	
 	@Test
 	public void testGetTypeStringList(){
-		assertArrayEquals(new String[]{"date(y-M-d)", "string", "number"}, table.getTypeStringList().toArray());
+		assertArrayEquals(new String[]{"date(y-M-d)", "string", "number"}, table.getTypeStrings().toArray());
 	}
 	
 	@Test

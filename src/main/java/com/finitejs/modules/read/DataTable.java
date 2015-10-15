@@ -21,9 +21,9 @@ public class DataTable implements Iterable<List<Object>>{
 	public static final int DEFAULT_PRINT_LIMIT = 30;
 	
 	/**
-	 * Constant for default index header name
+	 * Constant for default index column name
 	 */
-	private static final String DEFAULT_INDEX_HEADER_NAME = "###INDEX###";
+	private static final String DEFAULT_INDEX_COL_NAME = "###INDEX###";
 	
 	/** List to store columns */
 	private List<Column<?>> table;
@@ -55,8 +55,8 @@ public class DataTable implements Iterable<List<Object>>{
 		
 		// row index will be index column by default and 
 		// default index type is number
-		indexColumnName = DEFAULT_INDEX_HEADER_NAME;
-		indexColumn = Column.create(DEFAULT_INDEX_HEADER_NAME, NumberType.getType());
+		indexColumnName = DEFAULT_INDEX_COL_NAME;
+		indexColumn = Column.create(DEFAULT_INDEX_COL_NAME, NumberType.getType());
 	}
 	
 	/**
@@ -111,14 +111,14 @@ public class DataTable implements Iterable<List<Object>>{
 	}
 	
 	/**
-	 * Get list of column headers in table.
+	 * Get list of column headers/names in table.
 	 * 
-	 * @return list of headers
+	 * @return list of names
 	 */
-	public List<String> getHeaderList(){
-		List<String> headerList = new ArrayList<>();
-		headerList.addAll(columnIndexMap.keySet());
-		return headerList;
+	public List<String> getNames(){
+		List<String> nameList = new ArrayList<>();
+		nameList.addAll(columnIndexMap.keySet());
+		return nameList;
 	}
 	
 	/**
@@ -126,7 +126,7 @@ public class DataTable implements Iterable<List<Object>>{
 	 * 
 	 * @return list of types
 	 */
-	public List<ColumnType<?>> getTypeList(){
+	public List<ColumnType<?>> getTypes(){
 		List<ColumnType<?>> typeList = new ArrayList<>();
 		for (Column<?> column : table){
 			typeList.add(column.getType());
@@ -139,7 +139,7 @@ public class DataTable implements Iterable<List<Object>>{
 	 * 
 	 * @return list of string representing types of table values
 	 */
-	public List<String> getTypeStringList(){
+	public List<String> getTypeStrings(){
 		List<String> typeStringList = new ArrayList<>();
 		for (Column<?> column : table){
 			typeStringList.add(column.getType().toString());
@@ -182,7 +182,7 @@ public class DataTable implements Iterable<List<Object>>{
 		}
 		
 		// add to default index column
-		if (indexColumnName.equals(DEFAULT_INDEX_HEADER_NAME)){
+		if (indexColumnName.equals(DEFAULT_INDEX_COL_NAME)){
 			indexColumn.parseAndAdd(indexValue);
 		}
 		
@@ -202,29 +202,29 @@ public class DataTable implements Iterable<List<Object>>{
 	/**
 	 * Adds a new column to the table.
 	 * 
-	 * @param header  column header name, if null column index is used as header
+	 * @param name  column name, if null column index is used as name
 	 * @param type  type information, if null column will not be created
 	 * @param columnData   string representations of data to be added to 
 	 * the column, if null columns with empty values will be created
 	 * @throws IllegalArgumentException if duplicate column name
 	 */
-	public void addColumn(String header, ColumnType<?> type, List<String> columnData){
+	public void addColumn(String name, ColumnType<?> type, List<String> columnData){
 		
-		if (header == null){
-			// index as header
-			header = String.valueOf(getColumnCount());
+		if (name == null){
+			// index as name
+			name = String.valueOf(getColumnCount());
 		}
 		
-		if (header.equals(DEFAULT_INDEX_HEADER_NAME)){
+		if (name.equals(DEFAULT_INDEX_COL_NAME)){
 			throw new IllegalArgumentException(
-					String.format("Cannot use %s as column name.", DEFAULT_INDEX_HEADER_NAME));
+					String.format("Cannot use %s as column name.", DEFAULT_INDEX_COL_NAME));
 		}
 		
-		if (columnIndexMap.containsKey(header)){
+		if (columnIndexMap.containsKey(name)){
 			throw new IllegalArgumentException("Column names must be unique.");
 		}
 		
-		Column<?> column = Column.create(header, type);
+		Column<?> column = Column.create(name, type);
 		
 		if (column == null){
 			return;
@@ -236,7 +236,7 @@ public class DataTable implements Iterable<List<Object>>{
 		}
 		
 		boolean isIndexColumn = false;
-		if (indexColumnName.equals(header)){
+		if (indexColumnName.equals(name)){
 			// update index column reference
 			indexColumn = column;
 			isIndexColumn = true;
@@ -268,20 +268,20 @@ public class DataTable implements Iterable<List<Object>>{
 		table.add(column);
 		
 		// add column to column-index map
-		columnIndexMap.put(header, table.size() - 1);
+		columnIndexMap.put(name, table.size() - 1);
 	}
 	
 	/**
 	 * Adds a new column to the table.
 	 * 
-	 * @param header  column header name, if null column index is used as header
+	 * @param name  column name, if null column index is used as name
 	 * @param typeString  string representation of type, if null column will not be created
 	 * @param columnData   string representations of data to be added to 
 	 * the column, if null columns with empty values will be created
 	 */
-	public void addColumn(String header, String typeString, List<String> columnData){
+	public void addColumn(String name, String typeString, List<String> columnData){
 		ColumnType<?> type = ColumnType.getType(typeString);
-		addColumn(header, type, columnData);
+		addColumn(name, type, columnData);
 	}
 	
 	/**
@@ -415,14 +415,14 @@ public class DataTable implements Iterable<List<Object>>{
 	public void index(String columnName){
 		// check for column
 		if (columnName == null || (!columnIndexMap.containsKey(columnName) && 
-				!columnName.equals(DEFAULT_INDEX_HEADER_NAME))){
+				!columnName.equals(DEFAULT_INDEX_COL_NAME))){
 			throw new IllegalArgumentException("Invalid column name");
 		}
 		
 		Column<?> column = null;
-		if (columnName.equals(DEFAULT_INDEX_HEADER_NAME)){
+		if (columnName.equals(DEFAULT_INDEX_COL_NAME)){
 			// create default row index based index column
-			column = Column.create(DEFAULT_INDEX_HEADER_NAME, NumberType.getType());
+			column = Column.create(DEFAULT_INDEX_COL_NAME, NumberType.getType());
 			for (int i = 0; i < rowCount; i++){
 				column.parseAndAdd(String.valueOf(i));
 			}
@@ -562,19 +562,19 @@ public class DataTable implements Iterable<List<Object>>{
 	}
 	
 	/**
-	 * Creates a new {@code DataTable} instance with given header list, 
+	 * Creates a new {@code DataTable} instance with given name list, 
 	 * type list and data as list of list.
 	 * 
 	 * @param data  tabular data as list of rows and each 
 	 * row as list of string values
 	 * @param typeList  column types, cannot be empty or null
-	 * @param headerList  column header names, cannot be empty or null
+	 * @param nameList  column names, cannot be empty or null
 	 * @param indexColumn  name/header of the column to be used as index
 	 * @return {@code DataTable} instance
-	 * @throws IllegalArgumentException if empty type list or header list
+	 * @throws IllegalArgumentException if empty type list or name list
 	 */
 	public static DataTable getTable(List<List<String>> data, 
-			List<ColumnType<?>> typeList, List<String> headerList, String indexColumnName){
+			List<ColumnType<?>> typeList, List<String> nameList, String indexColumnName){
 		
 		DataTable table = new DataTable();
 		
@@ -583,23 +583,23 @@ public class DataTable implements Iterable<List<Object>>{
 			table.indexColumnName = indexColumnName;
 		}
 		
-		if (typeList == null || headerList == null || 
-				typeList.isEmpty() || headerList.isEmpty()){
-			throw new IllegalArgumentException("Type list or header list cannot be empty");
+		if (typeList == null || nameList == null || 
+				typeList.isEmpty() || nameList.isEmpty()){
+			throw new IllegalArgumentException("Type list or name list cannot be empty");
 		}
 		
 		// create columns
-		Iterator<String> headerItr = headerList.iterator();
+		Iterator<String> nameItr = nameList.iterator();
 		Iterator<ColumnType<?>> typeItr = typeList.iterator();
-		while(headerItr.hasNext()){
+		while(nameItr.hasNext()){
 			
-			String header = headerItr.next();
+			String name = nameItr.next();
 			ColumnType<?> type = null;
 			if (typeItr.hasNext()){
 				type = typeItr.next();
 			}
 			
-			table.addColumn(header, type, null);
+			table.addColumn(name, type, null);
 		}
 		
 		// add rows
@@ -614,21 +614,21 @@ public class DataTable implements Iterable<List<Object>>{
 	}
 	
 	/**
-	 * Creates a new {@code DataTable} instance with given header list, 
+	 * Creates a new {@code DataTable} instance with given name list, 
 	 * type specifier list and data as list of list.
 	 * 
 	 * @param data  tabular data as list of rows and each 
 	 * row as list of string values.
 	 * @param typeStringList  list of string representation of types in 
 	 * column order, or null if no predefined types and types will be determined dynamically
-	 * @param headerList  list of column headers, or null if no predefined 
-	 * headers and column indexes will be used as headers
+	 * @param nameList  list of column header/name, or null if no predefined 
+	 * names and column indexes will be used as names
 	 * @param indexColumn  name/header of the column to be used as index
 	 * @return {@code DataTable} instance
 	 * @throws IllegalArgumentException if not able to determine type
 	 */
 	public static DataTable getTableWithTypeStrings(List<List<String>> data, 
-			List<String> typeStringList, List<String> headerList, String indexColumn){
+			List<String> typeStringList, List<String> nameList, String indexColumn){
 		
 		List<ColumnType<?>> predefinedTypeList = new ArrayList<>();
 		
@@ -644,18 +644,18 @@ public class DataTable implements Iterable<List<Object>>{
 			throw new IllegalArgumentException("Not able to determine type of data");
 		}
 		
-		if (headerList == null){
-			headerList = new ArrayList<>();
+		if (nameList == null){
+			nameList = new ArrayList<>();
 		}
 		
-		// add column index as default headers
-		if (headerList.size() < typeList.size()){
-			for (int i = headerList.size(); i < typeList.size(); i++){
-				headerList.add(String.valueOf(i));
+		// add column index as default names
+		if (nameList.size() < typeList.size()){
+			for (int i = nameList.size(); i < typeList.size(); i++){
+				nameList.add(String.valueOf(i));
 			}
 		}
 		
-		return getTable(data, typeList, headerList, indexColumn);
+		return getTable(data, typeList, nameList, indexColumn);
 	}
 	
 	/**

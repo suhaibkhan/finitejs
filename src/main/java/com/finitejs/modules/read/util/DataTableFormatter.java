@@ -37,13 +37,13 @@ public class DataTableFormatter {
 		
 		List<List<String>> tableData = new ArrayList<>();
 		
-		List<String> headerList = table.getHeaderList();
+		List<String> nameList = table.getNames();
 		
 		// find max char count for each column
 		int maxCharCount = 0;
 		
-		for (String header : headerList){
-			maxCharCount = maxCharCount < header.length() ? header.length() : maxCharCount;
+		for (String name : nameList){
+			maxCharCount = maxCharCount < name.length() ? name.length() : maxCharCount;
 		}
 		
 		Iterator<List<String>> tableItr = table.formattedIterator(startIndex, limit);
@@ -56,16 +56,16 @@ public class DataTableFormatter {
 			tableData.add(rowData);
 		}
 		
-		// print headers
+		// print column names
 		// total char count = ((maxCharCount + 2 space) * column size) + (column size + 1 seperators)
-		int totalChartCountInRow = ((maxCharCount + 2) * headerList.size()) + (headerList.size() + 1);
+		int totalChartCountInRow = ((maxCharCount + 2) * nameList.size()) + (nameList.size() + 1);
 		
 		// top line
 		tableStrBuffer.append(drawLine(totalChartCountInRow));
 
 		tableStrBuffer.append(TABLE_VIEW_SEPARATOR);
-		for (String header : headerList){
-			tableStrBuffer.append(String.format(" %" + -maxCharCount + "s %s", header, TABLE_VIEW_SEPARATOR));
+		for (String name : nameList){
+			tableStrBuffer.append(String.format(" %" + -maxCharCount + "s %s", name, TABLE_VIEW_SEPARATOR));
 		}
 		tableStrBuffer.append(System.lineSeparator());	
 		
