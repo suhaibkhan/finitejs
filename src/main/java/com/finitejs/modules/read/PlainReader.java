@@ -37,11 +37,11 @@ public class PlainReader {
 	private List<ColumnType<?>> predefinedTypeList;
 	
 	/**
-	 * Predefined column header list. If a column header is predefined, 
-	 * then header from file is discarded. Table column index
-	 * is matched with column header index in this list.
+	 * Predefined column name list. If a column name is predefined, 
+	 * then header/name from file is discarded. Table column index
+	 * is matched with column name index in this list.
 	 */
-	private List<String> preDefinedHeaderList;
+	private List<String> preDefinedNameList;
 	
 	/**
 	 * {@link InputFormatter} to be used for each column. Table column index
@@ -54,7 +54,7 @@ public class PlainReader {
 	
 	private PlainReader(){
 		predefinedTypeList = new ArrayList<>();
-		preDefinedHeaderList = new ArrayList<>();
+		preDefinedNameList = new ArrayList<>();
 		inputFormatterList = new ArrayList<>();
 		commentString = DEFAULT_COMMENT_STRING;
 	}
@@ -96,37 +96,37 @@ public class PlainReader {
 	}
 	
 	/**
-	 * Set a predefined header for a column with specified index. If a column header 
-	 * is predefined, then header from file is discarded.
+	 * Set a predefined name for a column with specified index. If a column name 
+	 * is predefined, then name/header from file is discarded.
 	 * 
-	 * @param columnIndex  index of the column to which the header is set
-	 * @param header  column header
+	 * @param columnIndex  index of the column to which the name is set
+	 * @param name  column name
 	 */
-	public void setHeader(int columnIndex, String header){
+	public void setName(int columnIndex, String name){
 		// initialize with null
-		if (preDefinedHeaderList.size() <= columnIndex){
+		if (preDefinedNameList.size() <= columnIndex){
 			for (int i = 0; i <= columnIndex; i++){
-				preDefinedHeaderList.add(null);
+				preDefinedNameList.add(null);
 			}
 		}
 		
-		preDefinedHeaderList.set(columnIndex, header);
+		preDefinedNameList.set(columnIndex, name);
 	}
 	
 	/**
-	 * Set a predefined header for columns. If a column header is predefined, then header 
-	 * from file is discarded.  Table column index is matched with column header 
+	 * Set predefined name for columns. If a column name is predefined, then header/name 
+	 * from file is discarded.  Table column index is matched with column name 
 	 * index in this list.
 	 * 
-	 * @param headerArray  list of column headers
+	 * @param nameArray  list of column names
 	 */
-	public void setHeader(String[] headerArray){
+	public void setName(String[] nameArray){
 		
-		// clear header list
-		preDefinedHeaderList.clear();
+		// clear name list
+		preDefinedNameList.clear();
 		// copy values
-		for (int i = 0; i < headerArray.length; i++){
-			preDefinedHeaderList.add(headerArray[i]);
+		for (int i = 0; i < nameArray.length; i++){
+			preDefinedNameList.add(nameArray[i]);
 		}
 		
 	}
@@ -183,7 +183,7 @@ public class PlainReader {
 	/**
 	 * Read the specified file and returns the whole data as a {@link DataTable}.
 	 * Default delimiter will be used to separate columns and first non-comment row
-	 * will be considered as header row.
+	 * will be considered as header row with column names.
 	 * 
 	 * @param filePath  path of the file
 	 * @return {@link DataTable}
@@ -196,7 +196,7 @@ public class PlainReader {
 	/**
 	 * Read the specified file and returns the whole data as a {@link DataTable}.
 	 * Specified custom delimiter will be used to separate columns and first 
-	 * non-comment row will be considered as header row.
+	 * non-comment row will be considered as header row with column names.
 	 * 
 	 * @param filePath  path of the file
 	 * @param delimiter  custom delimiter to separate columns in a row
@@ -213,7 +213,8 @@ public class PlainReader {
 	 * 
 	 * @param filePath  path of the file
 	 * @param delimiter  custom delimiter to separate columns in a row
-	 * @param isHeaderPresent  true if first non-comment row is header row, else false
+	 * @param isHeaderPresent  true if first non-comment row is header 
+	 * row with column names, else false
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
@@ -228,7 +229,8 @@ public class PlainReader {
 	 * 
 	 * @param file  file to read
 	 * @param delimiter  custom delimiter to separate columns in a row
-	 * @param isHeaderPresent  true if first non-comment row is header row, else false
+	 * @param isHeaderPresent  true if first non-comment row is header 
+	 * row with column names, else false
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
@@ -241,7 +243,7 @@ public class PlainReader {
 		
 		List<List<String>> csvData = new ArrayList<>();
 		List<ColumnType<?>> typeList = new ArrayList<>(predefinedTypeList);
-		List<String> headerList = new ArrayList<>(preDefinedHeaderList);
+		List<String> nameList = new ArrayList<>(preDefinedNameList);
 		
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
@@ -265,16 +267,16 @@ public class PlainReader {
 			columnSize = columnSize < rowData.size() ? rowData.size() : columnSize;
 			
 			if (isHeaderPresent){
-				// consider row as header
+				// consider row as header with column names
 				for (int i = 0; i < rowData.size(); i++){
-					if (headerList.size() <= i){
-						// initialize header list with null
-						headerList.add(null);
+					if (nameList.size() <= i){
+						// initialize names list with null
+						nameList.add(null);
 					}
 					
 					// check for predefined headers
-					if (headerList.get(i) == null){
-						headerList.set(i, rowData.get(i));
+					if (nameList.get(i) == null){
+						nameList.set(i, rowData.get(i));
 					}
 				}
 				
@@ -331,15 +333,15 @@ public class PlainReader {
 		
 		reader.close();
 		
-		// add column index as default headers
-		if (headerList.size() < columnSize){
-			for (int i = headerList.size(); i < columnSize; i++){
-				headerList.add(String.valueOf(i));
+		// add column index as default names
+		if (nameList.size() < columnSize){
+			for (int i = nameList.size(); i < columnSize; i++){
+				nameList.add(String.valueOf(i));
 			}
 		}
 		
 		// index null, default will be taken
-		DataTable dTable = DataTable.getTable(csvData, typeList, headerList, null);
+		DataTable dTable = DataTable.getTable(csvData, typeList, nameList, null);
 		
 		return dTable;
 	}
@@ -366,16 +368,16 @@ public class PlainReader {
 	}
 	
 	/**
-	 * Returns a new {@code PlainReader} instance with specified type list and column headers.
+	 * Returns a new {@code PlainReader} instance with specified type list and column names.
 	 * 
 	 * @param typeStringArray  list of string representation of types in column order
-	 * @param headerArray  list of column headers
+	 * @param nameArray  list of column names
 	 * @return {@code PlainReader} instance
 	 */
-	public static PlainReader get(String[] typeStringArray, String[] headerArray){
+	public static PlainReader get(String[] typeStringArray, String[] nameArray){
 		PlainReader reader = new PlainReader();
 		reader.setType(typeStringArray);
-		reader.setHeader(headerArray);
+		reader.setName(nameArray);
 		return reader;
 	}
 	
