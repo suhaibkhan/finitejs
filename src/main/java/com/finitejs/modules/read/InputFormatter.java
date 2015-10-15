@@ -1,7 +1,7 @@
 package com.finitejs.modules.read;
 
 /**
- * InputFormatter can be used to format reader input before adding to DataTable. 
+ * InputFormatter can be used to format reader input before adding to {@link DataTable}. 
  */
 public interface InputFormatter {
 
