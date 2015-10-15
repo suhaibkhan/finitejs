@@ -20,7 +20,7 @@ public class PlainReaderTest {
     	// PlainReader reader = PlainReader.get(typeArray, headerArray);
     	PlainReader reader = PlainReader.get();
 
-    	reader.setHeader(2, "SALES_COUNT");
+    	reader.setName(2, "SALES_COUNT");
     	// reader.setType(0, "datetime(dd-MM-yyyy HH:mm:ss)");
     	reader.setCommentString("..");
     	// reader.setFormatter(0, new RegExFormatter("^(\\d{4})-(\\d{1,2})-(\\d{1,2})$", "$3-$2-$1 00:00:00"));
