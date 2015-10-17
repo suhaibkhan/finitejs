@@ -51,11 +51,11 @@ function Table(args){
 		}else if (Array.isArray(args[0])){
 			
 			// convert array to string array
-			if (isValidArray(args[0])){
-				stringArray = toStringArray(args[0]);
+			if (util.isSingleArray(args[0])){
+				stringArray = util.toStringWithArray(args[0]);
 				stringArrayList.add(stringArray);
-			}else if (isValidMultiArray(args[0])){
-				stringArrayList = toStringArray(args[0]);
+			}else if (util.isTwoLevelArray(args[0])){
+				stringArrayList = util.toStringWithArray(args[0]);
 			}else{
 				throw "Illegal arguments";
 			}
@@ -73,8 +73,8 @@ function Table(args){
 		
 		for (i = 0; i < args.length; i++){
 			// convert array to string array
-			if (Array.isArray(args[i]) && isValidArray(args[i])){
-				stringArrayList.add(toStringArray(args[i]));
+			if (Array.isArray(args[i]) && util.isSingleArray(args[i])){
+				stringArrayList.add(util.toStringWithArray(args[i]));
 			}else{
 				throw "Illegal arguments";
 			}
@@ -105,56 +105,6 @@ Table.prototype.toString = function(start, limit){
 	
 	return this._table.toString();
 };
-
-// checks whether a valid 2-d array which contains tabular data
-function isValidMultiArray(array){
-	var i, valid = true;
-	for (i = 0; i < array.length; i++){
-		if (!Array.isArray(array[i])){
-			valid = false;
-			break;
-		}else{
-			if (!isValidArray(array[i])){
-				valid = false;
-				break;
-			}
-		}
-	}
-	
-	return valid;
-}
-
-// check whether a valid array which contains only data for one row
-function isValidArray(array){
-	var i, valid = true;
-	for (i = 0; i < array.length; i++){
-		if (Array.isArray(array[i])){
-			valid = false;
-			break;
-		}
-	}
-	
-	return valid;
-}
-
-// converts an array to another array with string representation of elements
-// supports array of arrays also
-function toStringArray(array){
-	var i, stringArray = new ArrayList;
-	for (i = 0; i < array.length; i++){
-		if (Array.isArray(array[i])){
-			// recursively resolve to string
-			stringArray.add(toStringArray(array[i]));
-		}else{
-			if (array[i] && typeof array[i].toString === 'function'){
-				stringArray.add(array[i].toString());
-			}else{
-				stringArray.add('' + array[i]);
-			}
-		}
-	}
-	return stringArray;
-}
 
 /**
  * Example:

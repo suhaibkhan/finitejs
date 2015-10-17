@@ -36,13 +36,13 @@ Reader.prototype.types = function(){
 	
 	if (arguments.length > 1){
 		// expecting type strings as arguments
-		if (isValidArray(arguments)){
-			typeArray = toStringArray(arguments);
+		if (util.isSingleArray(arguments)){
+			typeArray = util.toStringWithArray(arguments);
 		}
 	}else if(arguments.length == 1){
 		// expecting an array as argument
-		if (isValidArray(arguments[0])){
-			typeArray = toStringArray(arguments[0]);
+		if (util.isSingleArray(arguments[0])){
+			typeArray = util.toStringWithArray(arguments[0]);
 		}
 	}
 	
@@ -70,13 +70,13 @@ Reader.prototype.names = function(){
 	
 	if (arguments.length > 1){
 		// expecting type strings as arguments
-		if (isValidArray(arguments)){
-			nameArray = toStringArray(arguments);
+		if (util.isSingleArray(arguments)){
+			nameArray = util.toStringWithArray(arguments);
 		}
 	}else if(arguments.length == 1){
 		// expecting an array as argument
-		if (isValidArray(arguments[0])){
-			nameArray = toStringArray(arguments[0]);
+		if (util.isSingleArray(arguments[0])){
+			nameArray = util.toStringWithArray(arguments[0]);
 		}
 	}
 	
@@ -133,38 +133,6 @@ Reader.prototype.tsv = function(file, settings){
 	return this.delim(file, settings);
 };
 
-//converts an array to another array with string representation of elements
-//supports array of arrays also
-function toStringArray(array){
-	var i, stringArray = new ArrayList;
-	for (i = 0; i < array.length; i++){
-		if (Array.isArray(array[i])){
-			// recursively resolve to string
-			stringArray.add(toStringArray(array[i]));
-		}else{
-			if (array[i] && typeof array[i].toString === 'function'){
-				stringArray.add(array[i].toString());
-			}else{
-				stringArray.add('' + array[i]);
-			}
-		}
-	}
-	return stringArray;
-}
-
-//check whether a valid array which contains only data for one row
-function isValidArray(array){
-	var i, valid = true;
-	for (i = 0; i < array.length; i++){
-		if (Array.isArray(array[i])){
-			valid = false;
-			break;
-		}
-	}
-	
-	return valid;
-}
-
 read = function(){
 	return new Reader();
 };
@@ -173,7 +141,7 @@ read = function(){
  * Reads the specified CSV file and returns a table instance.
  * 
  * @param {string} file - file path
- * @param {Object} [settings] - optional settings object
+ * @param {object} [settings] - optional settings object
  * @param {boolean} [settings.header=true] true if first non-comment row is header row, else false
  * @param {Array} [settings.types] string representations of column types
  * @param {Array} [settings.names] column names
@@ -186,13 +154,13 @@ read.csv = function(file, settings){
 	}
 	
 	if (settings.types && Array.isArray(settings.types) && 
-			isValidArray(settings.types)){
-		types = toStringArray(settings.types);
+			util.isSingleArray(settings.types)){
+		types = util.toStringWithArray(settings.types);
 	}
 	
 	if (settings.names && Array.isArray(settings.names) && 
-			isValidArray(settings.names)){
-		names = toStringArray(settings.names);
+			util.isSingleArray(settings.names)){
+		names = util.toStringWithArray(settings.names);
 	}
 
 	var reader = PlainReader.get(Java.to(types, 'String[]'), Java.to(names, 'String[]'));
