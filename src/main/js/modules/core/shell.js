@@ -6,6 +6,9 @@ var console = Java.type("com.finitejs.modules.core.ConsoleUtils");
 // JSEngine for executing JavaScript.
 var JSEngine = Java.type('com.finitejs.system.JSEngine');
 
+//JSEngine singleton instance
+var jsEngine = JSEngine.getInstance();
+
 // Get a BufferedReader to System.in
 var consoleReader = console.getInputReader();
 
@@ -14,11 +17,12 @@ var consoleReader = console.getInputReader();
 // executed by module loader.
 
 var sharedObjects = {};
+sharedObjects.exports = exports;
 sharedObjects.require = require;
 sharedObjects.__filename = module.filename = '<shell>';
 sharedObjects.__dirname = '<shell>';
 
-JSEngine.getInstance().addAllLocalVariables(sharedObjects, module.context);
+jsEngine.addGlobalVariableMap(sharedObjects);
 
 function start(){
 	
@@ -40,17 +44,23 @@ function start(){
 			}
 			
 			// parse input to enable mutiline expressions
+			// TODO
 			
 			// use shell context to parse all input
-			output = JSEngine.getInstance().evalInContext(input, module.context);
+			output = jsEngine.eval(input);
 			
 			// print if a variable or output not null
 			if (output != null || 
 				/^[a-zA-Z_$][a-zA-Z_$0-9]*(?:\.[a-zA-Z_$][a-zA-Z_$0-9]*)*$/.test(input.trim())){
-				if (output && typeof output.toString === 'function'){
+				
+				if (output && !Array.isArray(output) && 
+						typeof output.toString === 'function' && 
+						output.toString() !== '[object Object]'){
 					console.println(output.toString());
 				}else{
-					console.println(output);
+					// try to print JSON representation of object instead of [object Object]
+					// JSON representation of array is printed instead of Array.toString
+					console.println(JSON.stringify(output));
 				}
 			}
 			

@@ -8,7 +8,6 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
-import javax.script.SimpleScriptContext;
 
 import com.finitejs.modules.core.ConsoleUtils;
 import com.finitejs.modules.core.ModuleLoaderUtils;
@@ -61,9 +60,6 @@ public class JSEngine {
 	/** Script Engine instance used to execute JavaScript. */
 	private ScriptEngine engine;
 	
-	/** Map for storing global variables, which are shared across all contexts. */
-	private Map<String, Object> globalMap;
-	
 	/** Flag to indicate whether finite.js started or not. */
 	private boolean finiteJsStarted;
 	
@@ -81,41 +77,26 @@ public class JSEngine {
 	
 	private JSEngine(){
 		engine = new ScriptEngineManager().getEngineByName(ENGINE_NAME);
-		globalMap = new HashMap<String, Object>();
 		finiteJsStarted = false;
 	}
 	
 	/**
-	 * Adds a variable to global map. 
-	 * These global variables will be shared across all contexts.
+	 * Adds a global variable to the current engine context.
 	 * 
 	 * @param varName  name of the global variable
 	 * @param object  value of the variable
 	 */
 	public void addGlobalVariable(String varName, Object object){
-		globalMap.put(varName, object);
+		engine.getBindings(ScriptContext.ENGINE_SCOPE).put(varName, object);
 	}
 	
 	/**
-	 * Adds a variable to specified context. Unlike global variables, this variable
-	 * will be only available in this context.
-	 * 
-	 * @param varName  name of the variable
-	 * @param object  value of the variable
-	 * @param context  context to which variable needs to be added
-	 */
-	public void addLocalVariable(String varName, Object object, ScriptContext context){
-		context.getBindings(ScriptContext.ENGINE_SCOPE).put(varName, object);
-	}
-	
-	/**
-	 * Adds a group of local variables to specified context.
+	 * Adds a group of global variables to current engine context.
 	 * 
 	 * @param varMap  map containing variables as key-value pairs
-	 * @param context  context to which variables need to be added
 	 */
-	public void addAllLocalVariables(Map<String, Object> varMap, ScriptContext context){
-		context.getBindings(ScriptContext.ENGINE_SCOPE).putAll(varMap);
+	public void addGlobalVariableMap(Map<String, Object> varMap){
+		engine.getBindings(ScriptContext.ENGINE_SCOPE).putAll(varMap);
 	}
 	
 	/**
@@ -162,13 +143,9 @@ public class JSEngine {
 		// just started
 		finiteJsStarted = true;
 		
-		// make globals variable available in this context
-		addAllLocalVariables(globalMap, engine.getContext());
-		
-		// initialize an exports variable in this context
+		// initialize global exports variable in this context
 		// so that module loader can expose library
-		addLocalVariable(MODULE_LOADER_EXPORT_VAR_NAME, 
-				new HashMap<String, Object>(), engine.getContext());
+		addGlobalVariable(MODULE_LOADER_EXPORT_VAR_NAME, new HashMap<String, Object>());
 		
 		// load module loader
 		// it will create MODULE_LOADER_EXPORT_VAR_NAME._require 
@@ -194,40 +171,13 @@ public class JSEngine {
 	}
 	
 	/**
-	 * Creates a new JavaScript context for executing script.
-	 * Used by module loader as each module is loaded in its own context.
-	 * A set of variables are shared with this newly created context 
-	 * along with global variables.
-	 * 
-	 * @param sharedObjectMap  map containing variables to be shared
-	 * @return new context
-	 */
-	public ScriptContext createNewContext(Map<String, Object> sharedObjectMap){
-		
-		// create new context
-		ScriptContext context = new SimpleScriptContext();
-		context.setBindings(engine.createBindings(), ScriptContext.ENGINE_SCOPE);
-		
-		// make globals variable available in this context
-		addAllLocalVariables(globalMap, context);
-		
-		// set shared objects in this context
-		addAllLocalVariables(sharedObjectMap, context);
-				
-		return context;
-		
-	}
-	
-	/**
-	 * Executes script in the specified context.
+	 * Executes script in the current engine context.
 	 * 
 	 * @param script  script to be executed
-	 * @param context  context in which script needs to be executed
 	 * @return result of script execution
 	 * @throws ScriptException if error occurs while executing script
 	 */
-	public Object evalInContext(String script, ScriptContext context) throws ScriptException{
-		// run script
-		return engine.eval(script, context);
+	public Object eval(String script) throws ScriptException{
+		return engine.eval(script);
 	}
 }

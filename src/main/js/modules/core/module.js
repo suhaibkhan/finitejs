@@ -18,7 +18,6 @@
 		this.parent = parent;
 		this.exports = {};
 		this.filename = null;
-		this.context = null;
 	}
 	
 	// loads a module
@@ -81,19 +80,17 @@
 		
 		var compileSuccess = true;
 		var moduleFilePath = this.filename;
-		var sharedObjects = {};
 		var moduleScript;
 		
 		try{
 			// read module script
 			moduleScript = NativeModulesUtil.readModule(moduleFilePath); 
 		
-			// module is bind to the new context
-			sharedObjects.module = this; 
-			this.context = JSEngine.getInstance().createNewContext(sharedObjects);
+			// current module is set as global module variable
+			JSEngine.getInstance().addGlobalVariable('module', this);
 			
-			// compile and execute in newly created context
-			JSEngine.getInstance().evalInContext(moduleScript, this.context);
+			// compile and execute
+			JSEngine.getInstance().eval(moduleScript);
 			
 		}catch(moduleException){
 			compileSuccess = false;
