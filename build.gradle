@@ -1,4 +1,3 @@
-
 apply plugin: 'java'
 apply plugin: 'eclipse'
 
@@ -7,97 +6,146 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 ext {
-  projectDistDir = "$distsDir/$project.name-$version"
+	projectDistDir = "$distsDir/$project.name-$version"
+	testJSResultFile = "$reportsDir/js-test-results.txt"
+	testJSRunner = "$projectDir/src/test/js/tests.js"
 }
 
 repositories {
-  mavenCentral()
+	mavenCentral()
 }
 
 dependencies {
-  // compile 'org.mapdb:mapdb:2.0-beta7'
-  compile 'org.apache.commons:commons-math3:3.5'
+	// compile 'org.mapdb:mapdb:2.0-beta7'
+	compile 'org.apache.commons:commons-math3:3.5'
 
-  testCompile 'junit:junit:4.12'
+	testCompile 'junit:junit:4.12'
 }
 
 task wrapper(type: Wrapper) {
-  gradleVersion = '2.7'
+	gradleVersion = '2.7'
 }
 
-task startScripts(dependsOn: 'jar'){
+task startScripts(dependsOn: 'jar') {
 
-  def templateMap = [mainClassName: 'com.finitejs.system.FiniteJS',
-    mainJarName: jar.archivePath.name, projectName: project.name]
+	inputs.file project.name
+	inputs.file project.name + '.bat'
 
-  // read start script templates from project root dir
-  def unixStartScript = new File(project.name).getText('UTF-8');
-  def winStartScript = new File(project.name + '.bat').getText('UTF-8');
+	outputs.file projectDistDir + File.separator + project.name
+	outputs.file projectDistDir + File.separator + project.name + '.bat'
 
-  // replace template variables
-  templateMap.each{ k, v ->
-    unixStartScript = unixStartScript.replaceAll("@$k@", v);
-    winStartScript = winStartScript.replaceAll("@$k@", v);
-  }
+	doLast {
+		def templateMap = [mainClassName: 'com.finitejs.system.FiniteJS',
+		mainJarName: jar.archivePath.name, projectName: project.name]
 
-  // write unix start script
-  def targetUnixFile = new File(projectDistDir, project.name);
-  if (!targetUnixFile.parentFile.exists()){
-    targetUnixFile.parentFile.mkdirs();
-  }
+		// read start script templates from project root dir
+		def unixStartScript = new File(project.name).getText('UTF-8')
+		def winStartScript = new File(project.name + '.bat').getText('UTF-8')
 
-  targetUnixFile.write(unixStartScript);
-  targetUnixFile.setExecutable(true, false);
+		// replace template variables
+		templateMap.each {
+			k, v -> unixStartScript = unixStartScript.replaceAll("@$k@", v)
+			winStartScript = winStartScript.replaceAll("@$k@", v)
+		}
 
-  // write win start script
-  def targetWinFile = new File(projectDistDir, project.name + '.bat');
-  if (!targetWinFile.parentFile.exists()){
-    targetWinFile.parentFile.mkdirs();
-  }
+		// write unix start script
+		def targetUnixFile = new File(projectDistDir, project.name)
+		if (!targetUnixFile.parentFile.exists()) {
+			targetUnixFile.parentFile.mkdirs()
+		}
 
-  targetWinFile.write(winStartScript);
-  targetWinFile.setExecutable(true, false);
+		targetUnixFile.write(unixStartScript)
+		targetUnixFile.setExecutable(true, false)
+
+		// write win start script
+		def targetWinFile = new File(projectDistDir, project.name + '.bat')
+		if (!targetWinFile.parentFile.exists()) {
+			targetWinFile.parentFile.mkdirs()
+		}
+
+		targetWinFile.write(winStartScript)
+		targetWinFile.setExecutable(true, false)
+	}
 }
 
 task copyDistFiles(dependsOn: 'startScripts') {
 
-  inputs.file 'LICENSE'
-  inputs.dir 'src/main/js'
-  inputs.dir 'samples'
+	inputs.file 'LICENSE'
+	inputs.dir 'src/main/js'
+	inputs.dir 'samples'
 
-  outputs.dir projectDistDir
+	outputs.dir projectDistDir
 
-  doLast {
-    copy {
-      from jar
-      into projectDistDir
-    }
-    copy {
-      from configurations.runtime
-      into "$projectDistDir/lib"
-    }
-    copy {
-      from 'src/main/js'
-      into projectDistDir
-    }
-    copy {
-      from 'samples'
-      into "$projectDistDir/samples"
-    }
-    copy {
-      from 'LICENSE'
-      into projectDistDir
-    }
-  }
+	doLast {
+		copy {
+			from jar
+			into projectDistDir
+		}
+		copy {
+			from configurations.runtime
+			into "$projectDistDir/lib"
+		}
+		copy {
+			from 'src/main/js'
+			into projectDistDir
+		}
+		copy {
+			from 'samples'
+			into "$projectDistDir/samples"
+		}
+		copy {
+			from 'LICENSE'
+			into projectDistDir
+		}
+	}
 }
 
-task distZip (dependsOn: 'copyDistFiles', type: Zip) {
-    from projectDistDir
+task distZip(dependsOn: 'copyDistFiles', type: Zip) {
+	from projectDistDir
 }
 
-task distTar (dependsOn: 'copyDistFiles', type: Tar) {
-    from projectDistDir
+task distTar(dependsOn: 'copyDistFiles', type: Tar) {
+	from projectDistDir
+}
+
+task testJS(dependsOn: 'copyDistFiles') {
+
+	inputs.dir 'src/test/js'
+	outputs.file testJSResultFile
+
+	doLast {
+		def workingDir = projectDistDir
+		
+		//on linux
+		def commandLine = './' + project.name
+		if (System.properties['os.name'].toLowerCase().contains('windows')){
+			//on windows
+			commandLine = 'cmd /c ' + project.name + '.bat'
+		}
+		
+		def args = testJSRunner
+
+		def command = "$commandLine $args";
+		
+		def sout = new StringBuffer(), serr = new StringBuffer()
+
+		def proc = command.execute(null, new File(workingDir))
+		proc.consumeProcessOutput(sout, serr)
+		proc.waitFor()
+
+		def testReportFile = new File(testJSResultFile)
+		if (!testReportFile.parentFile.exists()) {
+			testReportFile.parentFile.mkdirs()
+		}
+		
+		testReportFile.write(sout.toString())
+
+		if (!serr.toString().trim().equals('')) {
+			throw new Exception(serr.toString())
+		}
+	}
 }
 
 tasks.assemble.dependsOn(distZip);
 tasks.assemble.dependsOn(distTar);
+tasks.check.dependsOn(testJS);
