@@ -5,22 +5,33 @@
 
 var JSEngine = Java.type('com.finitejs.system.JSEngine');
 
+// JSEngine singleton instance
+var jsEngine = JSEngine.getInstance();
+
 // get core modules and set as global variables to be 
 // shared across contexts.
+
 var Map = require('map');
-JSEngine.getInstance().addGlobalVariable('Map', Map);
+jsEngine.addGlobalVariable('Map', Map);
+
+var util = require('util');
+jsEngine.addGlobalVariable('util', util);
+
+var assert = require('assert');
+jsEngine.addGlobalVariable('assert', assert);
+
 var table = require('table');
-JSEngine.getInstance().addGlobalVariable('table', table);
+jsEngine.addGlobalVariable('table', table);
+
 var read = require('read');
-JSEngine.getInstance().addGlobalVariable('read', read);
+jsEngine.addGlobalVariable('read', read);
 
 var math = require('math');
-JSEngine.getInstance().addGlobalVariable('cbrt', math.cbrt);
-
+jsEngine.addGlobalVariable('cbrt', math.cbrt);
 
 var stat = require('stat');
-JSEngine.getInstance().addGlobalVariable('mean', stat.mean);
-JSEngine.getInstance().addGlobalVariable('std', stat.std);
+jsEngine.addGlobalVariable('mean', stat.mean);
+jsEngine.addGlobalVariable('std', stat.std);
 
 if (!__shell){
 	// load main file passed as cmd line argument
