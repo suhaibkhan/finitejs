@@ -230,7 +230,7 @@ public class PlainReader {
 	 * Default delimiter will be used to separate columns and first non-comment row
 	 * will be considered as header row with column names.
 	 * 
-	 * @param path  path of the file, it can also be a URL
+	 * @param path  path to the file, it can also be a URL
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
@@ -243,7 +243,7 @@ public class PlainReader {
 	 * Specified custom delimiter will be used to separate columns and first 
 	 * non-comment row will be considered as header row with column names.
 	 * 
-	 * @param path  path of the file, it can also be a URL
+	 * @param path  path to the file, it can also be a URL
 	 * @param delimiter  custom delimiter to separate columns in a row
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
@@ -256,7 +256,7 @@ public class PlainReader {
 	 * Read the specified file and returns the whole data as a {@link DataTable}.
 	 * Specified custom delimiter will be used to separate columns.
 	 * 
-	 * @param path  path of the file, it can also be a URL
+	 * @param path  path to the file, it can also be a URL
 	 * @param delimiter  custom delimiter to separate columns in a row
 	 * @param isHeaderPresent  true if first non-comment row is header 
 	 * row with column names, else false
