@@ -2,7 +2,7 @@
 
 /**
  * Assert module used for testing other js modules.
- * @module assert
+ * @exports assert
  */
 var assert = {};
 
