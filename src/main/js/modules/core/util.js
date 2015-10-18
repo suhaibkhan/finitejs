@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * Module that contains several utility functions used by other modules.
@@ -6,11 +7,14 @@
 
 var util = {};
 
+// java imports
+var String = Java.type('java.lang.String');
+
 /**
  * Converts the argument to its string representation. If argument is an array,
  * then array with string representation is returned.
  * 
- * @param {object} o - argument to be converted
+ * @param {*} o - argument to be converted
  * @returns {string|Array} converted string or string array
  */
 util.toStringWithArray = function (o){
@@ -45,7 +49,7 @@ util.toStringWithArray = function (o){
 /**
  * Check whether given argument is a valid single dimensional array.
  * 
- * @param {object} o - argument to be checked
+ * @param {*} o - argument to be checked
  * @returns {boolean} true if valid, else false
  */
 util.isSingleArray = function (o){
@@ -69,7 +73,7 @@ util.isSingleArray = function (o){
 /**
  * Checks whether given argument is a valid two level array which contains tabular data.
  * 
- * @param {object} o - argument to be checked
+ * @param {*} o - argument to be checked
  * @returns {boolean} true if valid, else false
  */
 util.isTwoLevelArray = function (o){
@@ -91,10 +95,10 @@ util.isTwoLevelArray = function (o){
 };
 
 /**
- * Recursively checks for equality of two objects.
+ * Recursively checks for equality of two objects of any type.
  * 
- * @param {object} a - first object
- * @param {object} b - second object
+ * @param {*} a - first object
+ * @param {*} b - second object
  * @returns {boolean} true if equal, else false
  */
 util.equals = function(a, b){
@@ -137,5 +141,13 @@ util.equals = function(a, b){
 		return a === b;
 	}
 };
+
+/**
+ * Returns a formatted string using the specified format string and arguments.
+ * 
+ * @param {string} format - format string
+ * @param {...*} args - arguments referenced by the format specifiers in the format string
+ */
+util.sprintf = String.format;
 
 module.exports = util;

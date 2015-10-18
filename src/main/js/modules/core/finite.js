@@ -16,6 +16,7 @@ jsEngine.addGlobalVariable('Map', Map);
 
 var util = require('util');
 jsEngine.addGlobalVariable('util', util);
+jsEngine.addGlobalVariable('sprintf', util.sprintf);
 
 var assert = require('assert');
 jsEngine.addGlobalVariable('assert', assert);

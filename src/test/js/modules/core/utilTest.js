@@ -31,6 +31,10 @@ exports.test = {
 		assert.checkTrue(util.equals([[1,[2]], [2,[5]], [3,[4]]], [[1,[2]], [2,[5]], [3,[4]]]));
 		assert.checkFalse(util.equals([[1,[2]], [2,[5]], [3,[5]]], [[1,[2]], [2,[5]], [3,[4]]]));
 
+	},
+	
+	testSprintf: function(){
+		assert.equals('1-test', util.sprintf('%d-%s', 1, 'test'));
 	}
 	
 };
