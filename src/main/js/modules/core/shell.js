@@ -70,7 +70,9 @@ function start(){
 			}
 			
 		}catch(ex){
-			// ex.printStackTrace();
+			if (__debug){
+				ex.printStackTrace();
+			}
 			console.errorf("%s%n", ex);
 		}
 	}
