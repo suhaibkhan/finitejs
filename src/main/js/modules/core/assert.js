@@ -123,7 +123,7 @@ assert.checkTrue = function(actual, msg){
 };
 
 /**
- * Asserts if actual value is true.
+ * Asserts if actual value is not false.
  * 
  * @param {object} actual - actual value
  * @param {string} [msg] - message to print on assert 
@@ -139,6 +139,48 @@ assert.checkFalse = function(actual, msg){
 	}
 	
 	if (actual !== false){
+		throw 'Assertion error : ' + msg;
+	}
+};
+
+/**
+ * Asserts if actual value is not null.
+ * 
+ * @param {object} actual - actual value
+ * @param {string} [msg] - message to print on assert 
+ */
+assert.checkNull = function(actual, msg){
+	
+	var actStr;
+	
+	if (!msg){
+		actStr = JSON.stringify(actual);
+
+		msg = 'expected: <null> but was: <' + actStr + '>';
+	}
+	
+	if (actual !== null){
+		throw 'Assertion error : ' + msg;
+	}
+};
+
+/**
+ * Asserts if actual value is null.
+ * 
+ * @param {object} actual - actual value
+ * @param {string} [msg] - message to print on assert 
+ */
+assert.checkNotNull = function(actual, msg){
+	
+	var actStr;
+	
+	if (!msg){
+		actStr = JSON.stringify(actual);
+
+		msg = 'expected: <not null> but was: <' + actStr + '>';
+	}
+	
+	if (actual === null){
 		throw 'Assertion error : ' + msg;
 	}
 };
