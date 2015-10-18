@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Read module for reading different file formats.
  * @module read

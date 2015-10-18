@@ -1,3 +1,4 @@
+'use strict';
 
 function Map(){
 	var HashMap = Java.type('java.util.HashMap');

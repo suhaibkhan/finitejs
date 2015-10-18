@@ -1,3 +1,5 @@
+'use strict';
+
 /**
  * Assert module used for testing modules.
  * @module assert
