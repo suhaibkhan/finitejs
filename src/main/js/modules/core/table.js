@@ -1,8 +1,7 @@
 'use strict';
 
 /**
- * Table module
- * @module table
+ * Module:table for tabular data manipulations.
  */
 
 var DataTable = Java.type('com.finitejs.modules.read.DataTable');
@@ -122,9 +121,10 @@ Table.prototype.toString = function(start, limit){
 };
 
 /**
- * Creates a Table instance based on the arguments.
+ * Module for tabular data operations.
+ * Exports a function that creates a {@link Table} instance based on the arguments.
  * 
- * @constructs Table
+ * @exports table
  * @param {...Array|com.finitejs.modules.read.DataTable} - table constructor 
  * can have argument of type DataTable or arrays
  * @returns {Table}

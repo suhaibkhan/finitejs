@@ -1,11 +1,8 @@
 'use strict';
 
 /**
- * Module for reading different file formats.
- * 
- * @module read
+ * Module:read for reading different file formats.
  */
-var read = {};
 
 /** 
  * Enum for delimiters.
@@ -264,12 +261,13 @@ Reader.prototype.tsv = function(path, settings){
 };
 
 /**
- * Creates an instance of Reader.
+ * Module for reading different file formats.
+ * Exports a function, which can be used to create an instance of {@link Reader}.
  * 
- * @constructs Reader
+ * @exports read
  * @returns {Reader}
  */
-read = function(){
+var read = function(){
 	return new Reader();
 };
 
