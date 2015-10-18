@@ -363,7 +363,9 @@ public class PlainReader {
 	 */
 	public static PlainReader get(String[] typeStringArray){
 		PlainReader reader = new PlainReader();
-		reader.setType(typeStringArray);
+		if (typeStringArray != null){
+			reader.setType(typeStringArray);
+		}
 		return reader;
 	}
 	
@@ -376,8 +378,12 @@ public class PlainReader {
 	 */
 	public static PlainReader get(String[] typeStringArray, String[] nameArray){
 		PlainReader reader = new PlainReader();
-		reader.setType(typeStringArray);
-		reader.setName(nameArray);
+		if (typeStringArray != null){
+			reader.setType(typeStringArray);
+		}
+		if (nameArray != null){
+			reader.setName(nameArray);
+		}
 		return reader;
 	}
 	

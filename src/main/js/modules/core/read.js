@@ -155,18 +155,16 @@ read.csv = function(file, settings){
 		isHeaderPresent = settings.header;
 	}
 	
-	if (settings.types && Array.isArray(settings.types) && 
-			util.isSingleArray(settings.types)){
+	if (settings && settings.types && util.isSingleArray(settings.types)){
 		types = util.toStringWithArray(settings.types);
 	}
 	
-	if (settings.names && Array.isArray(settings.names) && 
-			util.isSingleArray(settings.names)){
+	if (settings && settings.names && util.isSingleArray(settings.names)){
 		names = util.toStringWithArray(settings.names);
 	}
 
 	var reader = PlainReader.get(Java.to(types, 'String[]'), Java.to(names, 'String[]'));
-	var dt = reader.read(file, CSV_DELIMITER, isHeaderPresent);
+	var dt = reader.read(file, DELIMITER.CSV, isHeaderPresent);
 	return table(dt);
 };
 
