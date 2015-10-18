@@ -138,9 +138,11 @@ task testJS(dependsOn: 'copyDistFiles') {
 			testReportFile.parentFile.mkdirs()
 		}
 		
-		testReportFile.write(sout.toString())
+		testReportFile.write(sprintf('%nTEST SUMMARY: %n%s', sout.toString()))
 
 		if (!serr.toString().trim().equals('')) {
+			// include errors also in report
+			testReportFile.append(sprintf('%nERROR: %n%n%s', serr.toString()))
 			throw new Exception(serr.toString())
 		}
 	}
