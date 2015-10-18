@@ -4,7 +4,6 @@
  * Assert module used for testing other js modules.
  * @module assert
  */
-
 var assert = {};
 
 /**

@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- * Module:read for reading different file formats.
- */
+// Module:read for reading different file formats.
 
 /** 
  * Enum for delimiters.

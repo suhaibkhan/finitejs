@@ -1,8 +1,6 @@
 'use strict';
 
-/**
- * Module:table for tabular data manipulations.
- */
+// Module:table for tabular data manipulations.
 
 var DataTable = Java.type('com.finitejs.modules.read.DataTable');
 var ArrayList = Java.type('java.util.ArrayList');

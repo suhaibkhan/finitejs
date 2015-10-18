@@ -5,7 +5,6 @@
  * 
  * @module util
  */
-
 var util = {};
 
 // java imports
