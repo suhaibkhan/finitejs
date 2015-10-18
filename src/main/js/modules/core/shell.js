@@ -53,6 +53,11 @@ function start(){
 			if (output != null || 
 				/^[a-zA-Z_$][a-zA-Z_$0-9]*(?:\.[a-zA-Z_$][a-zA-Z_$0-9]*)*$/.test(input.trim())){
 				
+				// show NaN in console instead of null
+				if (typeof output === 'number' && isNaN(output)){
+					output = 'NaN';
+				}
+				
 				if (output && !Array.isArray(output) && 
 						typeof output.toString === 'function' && 
 						output.toString() !== '[object Object]'){

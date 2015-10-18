@@ -27,6 +27,10 @@ util.toStringWithArray = function (o){
 		
 	}else{
 		
+		if (tyepof o === 'number' && isNaN(o)){
+			string = 'NaN';
+		}
+		
 		if (o && typeof o.toString === 'function' && 
 				o.toString() !== '[object Object]'){
 			string = o.toString();
