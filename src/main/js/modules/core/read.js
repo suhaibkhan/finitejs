@@ -12,6 +12,7 @@ var read = {};
  * 
  * @readonly
  * @enum {String}
+ * @ignore
  */
 var DELIMITER = {
 	CSV : ',',
