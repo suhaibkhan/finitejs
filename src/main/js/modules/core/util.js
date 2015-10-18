@@ -3,7 +3,7 @@
 /**
  * Module that contains several utility functions used by other modules.
  * 
- * @module util
+ * @exports util
  */
 var util = {};
 
