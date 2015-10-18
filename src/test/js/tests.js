@@ -1,3 +1,4 @@
+'use strict';
 
 /**
  * Test runner for finite.js modules.
@@ -69,10 +70,11 @@ function getAllFiles(dir){
 	}
 	
 	if (failedCount > 0){
-		console.errorf('%s %s completed, %s failed', completedCount, 
-				completedCount > 1 ? 'tests' : 'test', failedCount);
+		console.error(sprintf('%n%d %s completed, %d failed', completedCount.intValue(), 
+				completedCount > 1 ? 'tests' : 'test', failedCount.intValue()).toUpperCase());
 	}else{
-		console.printf('%s %s completed', completedCount, completedCount > 1 ? 'tests' : 'test');
+		console.print(sprintf('%n%d %s completed', completedCount.intValue(), 
+				completedCount > 1 ? 'tests' : 'test').toUpperCase());
 	}
 	
 })();
