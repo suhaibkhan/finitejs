@@ -31,6 +31,9 @@ public class PlainReaderTest {
     		return value;
     	});*/
     	
+    	// validator to avoid CPU item entries from sample CSV
+    	// reader.setValidator(1, value -> !value.equalsIgnoreCase("CPU"));
+    	
     	table = reader.read(sampleFilePath);
     }
 	

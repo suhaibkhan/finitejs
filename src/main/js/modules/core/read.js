@@ -12,9 +12,10 @@ var DELIMITER = {
 	TSV : '\t'
 };
 
+// java imports
 var PlainReader = Java.type("com.finitejs.modules.read.PlainReader");
 var InputFormatter = Java.type('com.finitejs.modules.read.InputFormatter');
-
+var InputValidator = Java.type('com.finitejs.modules.read.InputValidator');
 
 /**
  * @class
@@ -103,6 +104,36 @@ Reader.prototype.format = function(columnIndex, formatter){
 		throw "Illegal arguments";
 	}
 	return this;
+};
+
+Reader.prototype.validate = function(columnIndex, validator){
+	
+	var inputValidator = new InputValidator(function(input){
+		return validator(input);
+	});
+	
+	try{
+		this._reader.setValidator(columnIndex, inputValidator);
+	}catch(ex){
+		throw "Illegal arguments";
+	}
+	return this;
+};
+
+/**
+ * Set a comment string to use while reading. Lines starting with comment 
+ * string will be ignored.
+ * 
+ * @param {string} commentString - comment string
+ */
+Reader.prototype.comment = function(commentString){
+	
+	if (commentString && typeof commentString === 'string'){
+		this._reader.setCommentString(commentString);
+	}else{
+		throw "Illegal argument";
+	}
+	
 };
 
 Reader.prototype.delim = function(file, settings){

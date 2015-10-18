@@ -49,6 +49,12 @@ public class PlainReader {
 	 */
 	private List<InputFormatter> inputFormatterList;
 	
+	/**
+	 * {@link InputValidator} to be used for each column. Table column index
+	 * is matched with column formatter index in this list.
+	 */
+	private List<InputValidator> inputValidatorList;
+	
 	/** Comment string used */
 	private String commentString;
 	
@@ -56,6 +62,7 @@ public class PlainReader {
 		predefinedTypeList = new ArrayList<>();
 		preDefinedNameList = new ArrayList<>();
 		inputFormatterList = new ArrayList<>();
+		inputValidatorList = new ArrayList<>();
 		commentString = DEFAULT_COMMENT_STRING;
 	}
 	
@@ -166,6 +173,40 @@ public class PlainReader {
 	}
 	
 	/**
+	 * Set an {@link InputValidator} for a column with specified index. 
+	 * 
+	 * @param columnIndex  index of the column to which the validator is set
+	 * @param inputValidator  {@link InputValidator} to use
+	 */
+	public void setValidator(int columnIndex, InputValidator inputValidator){
+		// initialize with null
+		if (inputValidatorList.size() <= columnIndex){
+			for (int i = 0; i <= columnIndex; i++){
+				inputValidatorList.add(null);
+			}
+		}
+		
+		inputValidatorList.set(columnIndex, inputValidator);
+	}
+	
+	/**
+	 * Set {@link InputValidator} for columns. Table column index is matched with 
+	 * column validator index in this list.
+	 * 
+	 * @param inputValidatorArray  list of {@link InputValidator} to be used
+	 */
+	public void setValidator(InputValidator[] inputValidatorArray){
+		
+		// clear validator list
+		inputValidatorList.clear();
+		// copy values
+		for (int i = 0; i < inputValidatorArray.length; i++){
+			inputValidatorList.add(inputValidatorArray[i]);
+		}
+		
+	}
+	
+	/**
 	 * Set a comment string to use while reading. Lines starting with comment 
 	 * string will be ignored.
 	 * 
@@ -248,10 +289,7 @@ public class PlainReader {
 		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
 		int columnSize = 0;
-		List<String> rowData;
-		ColumnType<?> prevType;
-		ColumnType<?> curType;
-		InputFormatter inputFormatter;
+		List<String> rowData = null;
 		
 		// store CSV data in a dynamic array of string array
 		// also determine data type and number of columns
@@ -285,12 +323,27 @@ public class PlainReader {
 				continue;
 			}
 			
-			prevType = null;
-			curType = null;
-			inputFormatter = null;
+			ColumnType<?> prevType = null;
+			ColumnType<?> curType = null;
+			InputFormatter inputFormatter = null;
+			InputValidator inputValidator = null;
+			boolean validRow = true;
 			
 			// find type
 			for (int i = 0; i < rowData.size(); i++){
+				
+				// apply validators if present before formatter
+				if (inputValidatorList.size() > i && inputValidatorList.get(i) != null){
+					inputValidator = inputValidatorList.get(i);
+					
+					// check for validity of row value
+					// if any of the value is not valid then whole
+					// row will be discarded
+					if (!inputValidator.validate(rowData.get(i))){
+						validRow = false;
+						break;
+					}
+				}
 				
 				// check for formatters
 				if (inputFormatterList.size() > i && inputFormatterList.get(i) != null){
@@ -328,7 +381,9 @@ public class PlainReader {
 				}
 			}
 			
-			csvData.add(rowData);
+			if (validRow){
+				csvData.add(rowData);
+			}
 		}
 		
 		reader.close();
