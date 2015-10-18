@@ -10,10 +10,10 @@ var ArrayList = Java.type('java.util.ArrayList');
 
 /**
  * Creates a table instance for storing tabular data.
+ * 
  * @class
- * @private
- * @ignore
- * @param {Object[]|Object[][]|com.finitejs.modules.read.DataTable} - table constructor 
+ * @protected
+ * @param {...Array|com.finitejs.modules.read.DataTable} args - table constructor 
  * can have argument of type DataTable or arrays
  */
 function Table(args){
@@ -90,10 +90,23 @@ function Table(args){
 	
 }
 
+/**
+ * Returns row count of the table.
+ * 
+ * @returns {Number} row count
+ */
 Table.prototype.size = function(){
 	return this._table.getRowCount();
 };
 
+/**
+ * Returns string representation of the tabular data, starting at specified 
+ * row index and number of rows limited to specified limit.
+ * 
+ * @param {Number} [start] - index of the first row in the string representation
+ * @param {Number} [limit] - number of rows in the string representation
+ * @return {String} string representation
+ */
 Table.prototype.toString = function(start, limit){
 	
 	if (typeof start !== 'undefined' && start !== null && 
@@ -109,8 +122,13 @@ Table.prototype.toString = function(start, limit){
 };
 
 /**
- * Example:
+ * Creates a Table instance based on the arguments.
  * 
+ * @constructs Table
+ * @param {...Array|com.finitejs.modules.read.DataTable} - table constructor 
+ * can have argument of type DataTable or arrays
+ * @returns {Table}
+ * @example
  * var t = table([1,2,3],[4,5,6], {type: ['number', 'number', 'string'], header:['NUM1', 'NUM2', 'STR']});
  * var t = table([1,2,3],[4,5,6]);
  * var t = table([[1,2,3],[4,5,6]]);

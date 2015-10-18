@@ -2,6 +2,7 @@
 
 /**
  * Module that contains several utility functions used by other modules.
+ * 
  * @module util
  */
 
@@ -15,7 +16,7 @@ var String = Java.type('java.lang.String');
  * then array with string representation is returned.
  * 
  * @param {*} o - argument to be converted
- * @returns {string|Array} converted string or string array
+ * @returns {String|Array} converted string or string array
  */
 util.toStringWithArray = function (o){
 	var i, string;
@@ -50,7 +51,7 @@ util.toStringWithArray = function (o){
  * Check whether given argument is a valid single dimensional array.
  * 
  * @param {*} o - argument to be checked
- * @returns {boolean} true if valid, else false
+ * @returns {Boolean} true if valid, else false
  */
 util.isSingleArray = function (o){
 	var i, valid = true;
@@ -74,7 +75,7 @@ util.isSingleArray = function (o){
  * Checks whether given argument is a valid two level array which contains tabular data.
  * 
  * @param {*} o - argument to be checked
- * @returns {boolean} true if valid, else false
+ * @returns {Boolean} true if valid, else false
  */
 util.isTwoLevelArray = function (o){
 	var i, valid = true;
@@ -99,7 +100,7 @@ util.isTwoLevelArray = function (o){
  * 
  * @param {*} a - first object
  * @param {*} b - second object
- * @returns {boolean} true if equal, else false
+ * @returns {Boolean} true if equal, else false
  */
 util.equals = function(a, b){
 	
@@ -145,7 +146,7 @@ util.equals = function(a, b){
 /**
  * Returns a formatted string using the specified format string and arguments.
  * 
- * @param {string} format - format string
+ * @param {String} format - format string
  * @param {...*} args - arguments referenced by the format specifiers in the format string
  */
 util.sprintf = String.format;

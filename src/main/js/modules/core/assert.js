@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Assert module used for testing modules.
+ * Assert module used for testing other js modules.
  * @module assert
  */
 
@@ -11,9 +11,9 @@ var assert = {};
  * Asserts if expected value not equals to actual value.
  * Equality checked using {@code === } operator.
  * 
- * @param {object} expected - expected value
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert
+ * @param {*} expected - expected value
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert
  */
 assert.equals = function(expected, actual, msg){
 	
@@ -35,9 +35,9 @@ assert.equals = function(expected, actual, msg){
  * Asserts if expected value equals to actual value.
  * Equality checked using {@code === } operator.
  * 
- * @param {object} expected - expected value
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert
+ * @param {*} expected - expected value
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert
  */
 assert.notEquals = function(expected, actual, msg){
 	
@@ -59,9 +59,9 @@ assert.notEquals = function(expected, actual, msg){
  * Asserts if expected value not equals to actual value.
  * Equality checked recursively with each property.
  * 
- * @param {object} expected - expected value
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert
+ * @param {*} expected - expected value
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert
  */
 assert.deepEquals = function(expected, actual, msg){
 	
@@ -83,9 +83,9 @@ assert.deepEquals = function(expected, actual, msg){
  * Asserts if expected value equals to actual value.
  * Equality checked recursively with each property.
  * 
- * @param {object} expected - expected value
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert
+ * @param {*} expected - expected value
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert
  */
 assert.deepNotEquals = function(expected, actual, msg){
 	
@@ -106,8 +106,8 @@ assert.deepNotEquals = function(expected, actual, msg){
 /**
  * Asserts if actual value is not true.
  * 
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert 
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert 
  */
 assert.checkTrue = function(actual, msg){
 	
@@ -127,8 +127,8 @@ assert.checkTrue = function(actual, msg){
 /**
  * Asserts if actual value is not false.
  * 
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert 
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert 
  */
 assert.checkFalse = function(actual, msg){
 	
@@ -148,8 +148,8 @@ assert.checkFalse = function(actual, msg){
 /**
  * Asserts if actual value is not null.
  * 
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert 
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert 
  */
 assert.checkNull = function(actual, msg){
 	
@@ -169,8 +169,8 @@ assert.checkNull = function(actual, msg){
 /**
  * Asserts if actual value is null.
  * 
- * @param {object} actual - actual value
- * @param {string} [msg] - message to print on assert 
+ * @param {*} actual - actual value
+ * @param {String} [msg] - message to print on assert 
  */
 assert.checkNotNull = function(actual, msg){
 	

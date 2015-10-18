@@ -1,12 +1,18 @@
 'use strict';
 
 /**
- * Read module for reading different file formats.
+ * Module for reading different file formats.
+ * 
  * @module read
  */
 var read = {};
 
-/** @constant */
+/** 
+ * Enum for delimiters.
+ * 
+ * @readonly
+ * @enum {String}
+ */
 var DELIMITER = {
 	CSV : ',',
 	TSV : '\t'
@@ -18,12 +24,23 @@ var InputFormatter = Java.type('com.finitejs.modules.read.InputFormatter');
 var InputValidator = Java.type('com.finitejs.modules.read.InputValidator');
 
 /**
+ * Represents a file reader.
+ * 
  * @class
+ * @protected 
  */
 function Reader(){
 	this._reader = PlainReader.get();
 }
 
+/**
+ * Set a predefined type for a column with specified index. If a column 
+ * type is predefined, then dynamic type checking is skipped for that column.
+ * 
+ * @param {Number} columnIndex - index of the column to which the type is set
+ * @param {String} typeString - string representation of the type
+ * @returns {Reader} current reader instance, can be used for method chaining
+ */
 Reader.prototype.type =  function(columnIndex, typeString){
 	try{
 		this._reader.setType(columnIndex, typeString);
@@ -33,19 +50,31 @@ Reader.prototype.type =  function(columnIndex, typeString){
 	return this;
 };
 
+/**
+ * Set a predefined type for columns. If a column type is predefined, then dynamic 
+ * type checking is skipped for that column. Table column index is matched with 
+ * column type index in this list.
+ * 
+ * @param {String[]|...String} arguments - string representation of types in 
+ * column order as an array or as arguments
+ * @returns {Reader} current reader instance, can be used for method chaining
+ */
 Reader.prototype.types = function(){
 	
-	var typeArray = null, i;
+	var typeArray = null, i, args;
 	
-	if (arguments.length > 1){
+	// converts arguments object to array
+	args = Array.prototype.slice.call(arguments).sort();
+	
+	if (args.length > 1){
 		// expecting type strings as arguments
-		if (util.isSingleArray(arguments)){
-			typeArray = util.toStringWithArray(arguments);
+		if (util.isSingleArray(args)){
+			typeArray = util.toStringWithArray(args);
 		}
-	}else if(arguments.length == 1){
+	}else if(args.length == 1){
 		// expecting an array as argument
-		if (util.isSingleArray(arguments[0])){
-			typeArray = util.toStringWithArray(arguments[0]);
+		if (util.isSingleArray(args[0])){
+			typeArray = util.toStringWithArray(args[0]);
 		}
 	}
 	
@@ -58,6 +87,14 @@ Reader.prototype.types = function(){
 	return this;
 };
 
+/**
+ * Set a predefined name for a column with specified index. If a column name 
+ * is predefined, then name/header from file is discarded.
+ * 
+ * @param {Number} columnIndex - index of the column to which the name is set
+ * @param {String} name - column name
+ * @returns {Reader} current reader instance, can be used for method chaining
+ */
 Reader.prototype.name = function(columnIndex, name){
 	try{
 		this._reader.setName(columnIndex, name);
@@ -67,19 +104,31 @@ Reader.prototype.name = function(columnIndex, name){
 	return this;
 };
 
+/**
+ * Set predefined name for columns. If a column name is predefined, then header/name 
+ * from file is discarded.  Table column index is matched with column name 
+ * index in this list.
+ * 
+ * @param {String[]|...String} arguments - column names in column order as 
+ * an array or as arguments
+ * @returns {Reader} current reader instance, can be used for method chaining
+ */
 Reader.prototype.names = function(){
 	
-	var nameArray = null, i;
+	var nameArray = null, i, args;
 	
-	if (arguments.length > 1){
+	// converts arguments object to array
+	args = Array.prototype.slice.call(arguments).sort();
+	
+	if (args.length > 1){
 		// expecting type strings as arguments
-		if (util.isSingleArray(arguments)){
-			nameArray = util.toStringWithArray(arguments);
+		if (util.isSingleArray(args)){
+			nameArray = util.toStringWithArray(args);
 		}
-	}else if(arguments.length == 1){
+	}else if(args.length == 1){
 		// expecting an array as argument
-		if (util.isSingleArray(arguments[0])){
-			nameArray = util.toStringWithArray(arguments[0]);
+		if (util.isSingleArray(args[0])){
+			nameArray = util.toStringWithArray(args[0]);
 		}
 	}
 	
@@ -92,6 +141,16 @@ Reader.prototype.names = function(){
 	return this;
 };
 
+/**
+ * Set an input formatter for a column with specified index. Only result of the
+ * formatter will be stored.
+ * 
+ * @param {Number} columnIndex - index of the column to which the formatter is set
+ * @param {Function} formatter - formatter to use, should be a function that has 
+ * a string argument representing the input value and must return a string value 
+ * representing the formatted output
+ * @returns {Reader} current reader instance, can be used for method chaining
+ */
 Reader.prototype.format = function(columnIndex, formatter){
 	
 	var inputFormatter = new InputFormatter(function(input){
@@ -106,6 +165,16 @@ Reader.prototype.format = function(columnIndex, formatter){
 	return this;
 };
 
+/**
+ * Set an input validator for a column with specified index. If validator returns
+ * false for a value, then the whole row will be discarded.
+ * 
+ * @param {Number} columnIndex - index of the column to which the formatter is set
+ * @param {Function} validator - validator to use, should be a function that has 
+ * a string argument representing the input value and must return a boolean value 
+ * representing valid value or not
+ * @returns {Reader} current reader instance, can be used for method chaining
+ */
 Reader.prototype.validate = function(columnIndex, validator){
 	
 	var inputValidator = new InputValidator(function(input){
@@ -124,7 +193,8 @@ Reader.prototype.validate = function(columnIndex, validator){
  * Set a comment string to use while reading. Lines starting with comment 
  * string will be ignored.
  * 
- * @param {string} commentString - comment string
+ * @param {String} commentString - comment string
+ * @returns {Reader} current reader instance, can be used for method chaining
  */
 Reader.prototype.comment = function(commentString){
 	
@@ -136,7 +206,17 @@ Reader.prototype.comment = function(commentString){
 	
 };
 
-Reader.prototype.delim = function(file, settings){
+/**
+ * Read the specified file and returns the whole data as a {@link Table}.
+ * Specified custom delimiter will be used to separate columns.
+ * 
+ * @param {String} path - path to the file, it can also be a URL
+ * @param {Object} [settings] - optional settings object
+ * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
+ * @param {String} [settings.delimiter=DELIMITER.CSV] - delimiter to separate columns in a row
+ * @returns {Table}
+ */
+Reader.prototype.delim = function(path, settings){
 	var isHeaderPresent = true, delimiter = DELIMITER.CSV;
 	
 	if (settings && settings.delimiter){
@@ -147,40 +227,63 @@ Reader.prototype.delim = function(file, settings){
 		isHeaderPresent = false;
 	}
 	
-	return table(this._reader.read(file, delimiter, isHeaderPresent));
+	return table(this._reader.read(path, delimiter, isHeaderPresent));
 };
 
-Reader.prototype.csv = function(file, settings){
+/**
+ * Reads a CSV file and returns the whole data as a {@link Table}.
+ * 
+ * @param {String} path - path to the file, it can also be a URL
+ * @param {Object} [settings] - optional settings object
+ * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
+ * @returns {Table}
+ */
+Reader.prototype.csv = function(path, settings){
 	if (!settings){
 		settings = {};
 	}
 	settings.delimiter = DELIMITER.CSV;
-	return this.delim(file, settings);
+	return this.delim(path, settings);
 };
 
-Reader.prototype.tsv = function(file, settings){
+/**
+ * Reads a TSV file and returns the whole data as a {@link Table}.
+ * 
+ * @param {String} path - path to the file, it can also be a URL
+ * @param {Object} [settings] - optional settings object
+ * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
+ * @returns {Table}
+ */
+Reader.prototype.tsv = function(path, settings){
 	if (!settings){
 		settings = {};
 	}
 	settings.delimiter = DELIMITER.TSV;
-	return this.delim(file, settings);
+	return this.delim(path, settings);
 };
 
+/**
+ * Creates an instance of Reader.
+ * 
+ * @constructs Reader
+ * @returns {Reader}
+ */
 read = function(){
 	return new Reader();
 };
 
 /**
- * Reads the specified CSV file and returns a table instance.
+ * Reads the specified CSV file and returns the whole data as a {@link Table}.
  * 
- * @param {string} file - file path/URL
- * @param {object} [settings] - optional settings object
- * @param {boolean} [settings.header=true] true if first non-comment row is header row, else false
- * @param {Array} [settings.types] string representations of column types
- * @param {Array} [settings.names] column names
- * @returns {Table} table instance of CSV
+ * @param {String} path - path to the file, it can also be a URL
+ * @param {Object} [settings] - optional settings object
+ * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
+ * @param {Array} [settings.types] - string representations of column types
+ * @param {Array} [settings.names] - column names
+ * @returns {Table}
+ * @static
  */
-read.csv = function(file, settings){
+read.csv = function(path, settings){
 	var isHeaderPresent = true, types = null, names= null;
 	if (settings && settings.header != null){
 		isHeaderPresent = settings.header;
@@ -194,8 +297,38 @@ read.csv = function(file, settings){
 		names = util.toStringWithArray(settings.names);
 	}
 
-	var reader = PlainReader.get(Java.to(types, 'String[]'), Java.to(names, 'String[]'));
-	var dt = reader.read(file, DELIMITER.CSV, isHeaderPresent);
+	var reader = PlainReader.get(types, names);
+	var dt = reader.read(path, DELIMITER.CSV, isHeaderPresent);
+	return table(dt);
+};
+
+/**
+ * Reads the specified TSV file and returns the whole data as a {@link Table}.
+ * 
+ * @param {String} path - path to the file, it can also be a URL
+ * @param {Object} [settings] - optional settings object
+ * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
+ * @param {Array} [settings.types] - string representations of column types
+ * @param {Array} [settings.names] - column names
+ * @returns {Table}
+ * @static
+ */
+read.tsv = function(path, settings){
+	var isHeaderPresent = true, types = null, names= null;
+	if (settings && settings.header != null){
+		isHeaderPresent = settings.header;
+	}
+	
+	if (settings && settings.types && util.isSingleArray(settings.types)){
+		types = util.toStringWithArray(settings.types);
+	}
+	
+	if (settings && settings.names && util.isSingleArray(settings.names)){
+		names = util.toStringWithArray(settings.names);
+	}
+
+	var reader = PlainReader.get(types, names);
+	var dt = reader.read(path, DELIMITER.TSV, isHeaderPresent);
 	return table(dt);
 };
 

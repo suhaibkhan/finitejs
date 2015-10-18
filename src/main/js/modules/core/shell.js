@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * Module that starts the shell/REPL mode.
+ * 
+ * @module shell
+ */
+
 // Console I/O utils
 var console = Java.type("com.finitejs.modules.core.ConsoleUtils");
 

@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Represents a map.
+ * 
+ * @class
+ */
 function Map(){
 	var HashMap = Java.type('java.util.HashMap');
 	this._hashMap = new HashMap;
