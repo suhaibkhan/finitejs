@@ -14,6 +14,8 @@ public class PlainReaderTest {
     @Before
     public void setup() throws IOException{
     	String sampleFilePath = "samples/sample.csv";
+    	// String sampleFilePath = "https://raw.githubusercontent.com/suhaibkhan/finitejs/master/samples/sample.csv";
+
     	// String[] typeArray = new String[] {"date(yyyy-MM-dd)", "string", "number"};
     	// String[] headerArray = new String[]{"DATE", "ITEM NAME", "SALES COUNT"};
     	

@@ -22,6 +22,10 @@ public class NetUtils {
 		
 		try {
 			URI uri = new URI(urlStr);
+			if (uri.getScheme() == null){
+				return false;
+			}
+			
 			return uri.getScheme().equals("http") || uri.getScheme().equals("https");
 		} catch (URISyntaxException e) {
 			return false;

@@ -5,9 +5,13 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import com.finitejs.modules.core.NetUtils;
 
 /**
  * {@code PlainReader} can be used to read file formats like CSV, TSV, 
@@ -226,12 +230,12 @@ public class PlainReader {
 	 * Default delimiter will be used to separate columns and first non-comment row
 	 * will be considered as header row with column names.
 	 * 
-	 * @param filePath  path of the file
+	 * @param path  path of the file, it can also be a URL
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
-	public DataTable read(String filePath) throws IOException{
-		return read(new File(filePath), DEFAULT_DELIMITER, true);
+	public DataTable read(String path) throws IOException{
+		return read(path, DEFAULT_DELIMITER, true);
 	}
 	
 	/**
@@ -239,54 +243,64 @@ public class PlainReader {
 	 * Specified custom delimiter will be used to separate columns and first 
 	 * non-comment row will be considered as header row with column names.
 	 * 
-	 * @param filePath  path of the file
+	 * @param path  path of the file, it can also be a URL
 	 * @param delimiter  custom delimiter to separate columns in a row
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
-	public DataTable read(String filePath, String delimiter) throws IOException{
-		return read(new File(filePath), delimiter, true);
+	public DataTable read(String path, String delimiter) throws IOException{
+		return read(path, delimiter, true);
 	}
 	
 	/**
 	 * Read the specified file and returns the whole data as a {@link DataTable}.
 	 * Specified custom delimiter will be used to separate columns.
 	 * 
-	 * @param filePath  path of the file
+	 * @param path  path of the file, it can also be a URL
 	 * @param delimiter  custom delimiter to separate columns in a row
 	 * @param isHeaderPresent  true if first non-comment row is header 
 	 * row with column names, else false
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
-	public DataTable read(String filePath, 
+	public DataTable read(String path, 
 			String delimiter, boolean isHeaderPresent) throws IOException{
-		return read(new File(filePath), delimiter, isHeaderPresent);
+		
+		BufferedReader reader = null;
+		
+		if (NetUtils.isValidURL(path)){
+			URL url = new URL(path);
+			reader = new BufferedReader(new InputStreamReader(url.openStream()));
+		}else{
+			File file = new File(path);
+			if (!file.exists()){
+				throw new FileNotFoundException();
+			}
+			
+			reader = new BufferedReader(new FileReader(file));
+		}
+		
+		return read(reader, delimiter, isHeaderPresent);
 	}
 	
 	/**
-	 * Read the specified file and returns the whole data as a {@link DataTable}.
-	 * Specified custom delimiter will be used to separate columns.
+	 * Read the file from the specified reader and returns the whole data as a 
+	 * {@link DataTable}. Specified custom delimiter will be used to separate columns.
 	 * 
-	 * @param file  file to read
+	 * @param reader  buffered input stream reader to the file
 	 * @param delimiter  custom delimiter to separate columns in a row
 	 * @param isHeaderPresent  true if first non-comment row is header 
 	 * row with column names, else false
 	 * @return {@link DataTable}
 	 * @throws IOException if error occurs when reading file
 	 */
-	public DataTable read(File file, 
+	public DataTable read(BufferedReader reader, 
 			String delimiter, boolean isHeaderPresent) throws IOException {
-		
-		if (!file.exists()){
-			throw new FileNotFoundException();
-		}
 		
 		List<List<String>> csvData = new ArrayList<>();
 		List<ColumnType<?>> typeList = new ArrayList<>(predefinedTypeList);
 		List<String> nameList = new ArrayList<>(preDefinedNameList);
 		
-		BufferedReader reader = new BufferedReader(new FileReader(file));
 		String line = null;
 		int columnSize = 0;
 		List<String> rowData = null;

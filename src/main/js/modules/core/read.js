@@ -173,7 +173,7 @@ read = function(){
 /**
  * Reads the specified CSV file and returns a table instance.
  * 
- * @param {string} file - file path
+ * @param {string} file - file path/URL
  * @param {object} [settings] - optional settings object
  * @param {boolean} [settings.header=true] true if first non-comment row is header row, else false
  * @param {Array} [settings.types] string representations of column types
