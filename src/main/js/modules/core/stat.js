@@ -20,7 +20,7 @@ stat.mean = function(values) {
 };
 
 /**
- * Return standard deviation of the values.
+ * Returns standard deviation of the values.
  *
  * @param {...number|number[]} values
  */
