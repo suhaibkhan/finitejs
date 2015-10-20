@@ -34,6 +34,9 @@ var stat = require('stat');
 jsEngine.addGlobalVariable('mean', stat.mean);
 jsEngine.addGlobalVariable('std', stat.std);
 
+var Complex = require('complex');
+jsEngine.addGlobalVariable('Complex', Complex);
+
 if (!__shell){
 	// load main file passed as cmd line argument
 	require(__mainfile, true);
