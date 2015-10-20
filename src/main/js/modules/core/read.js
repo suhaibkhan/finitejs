@@ -270,18 +270,25 @@ var read = function(){
 };
 
 /**
- * Reads the specified CSV file and returns the whole data as a {@link Table}.
+ * Reads the specified file and returns the whole data as a {@link Table}.
+ * Specified custom delimiter will be used to separate columns.
  * 
  * @param {String} path - path to the file, it can also be a URL
  * @param {Object} [settings] - optional settings object
  * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
  * @param {Array} [settings.types] - string representations of column types
  * @param {Array} [settings.names] - column names
+ * @param {String} [settings.delimiter=DELIMITER.CSV] - delimiter to separate columns in a row
  * @returns {Table}
  * @static
  */
-read.csv = function(path, settings){
-	var isHeaderPresent = true, types = null, names= null;
+read.delim = function(path, settings){
+	var isHeaderPresent = true, types = null, names= null, delimiter = DELIMITER.CSV;
+	
+	if (settings && settings.delimiter){
+		delimiter = settings.delimiter;
+	}
+	
 	if (settings && settings.header != null){
 		isHeaderPresent = settings.header;
 	}
@@ -295,8 +302,29 @@ read.csv = function(path, settings){
 	}
 
 	var reader = PlainReader.get(types, names);
-	var dt = reader.read(path, DELIMITER.CSV, isHeaderPresent);
+	var dt = reader.read(path, delimiter, isHeaderPresent);
 	return table(dt);
+};
+
+
+/**
+ * Reads the specified CSV file and returns the whole data as a {@link Table}.
+ * 
+ * @param {String} path - path to the file, it can also be a URL
+ * @param {Object} [settings] - optional settings object
+ * @param {Boolean} [settings.header=true] - true if first non-comment row is header row, else false
+ * @param {Array} [settings.types] - string representations of column types
+ * @param {Array} [settings.names] - column names
+ * @returns {Table}
+ * @static
+ */
+read.csv = function(path, settings){
+	if (!settings){
+		settings = {};
+	}
+	settings.delimiter = DELIMITER.CSV;
+	
+	return read.delim(path, settings);
 };
 
 /**
@@ -311,22 +339,12 @@ read.csv = function(path, settings){
  * @static
  */
 read.tsv = function(path, settings){
-	var isHeaderPresent = true, types = null, names= null;
-	if (settings && settings.header != null){
-		isHeaderPresent = settings.header;
+	if (!settings){
+		settings = {};
 	}
+	settings.delimiter = DELIMITER.TSV;
 	
-	if (settings && settings.types && util.isSingleArray(settings.types)){
-		types = util.toStringWithArray(settings.types);
-	}
-	
-	if (settings && settings.names && util.isSingleArray(settings.names)){
-		names = util.toStringWithArray(settings.names);
-	}
-
-	var reader = PlainReader.get(types, names);
-	var dt = reader.read(path, DELIMITER.TSV, isHeaderPresent);
-	return table(dt);
+	return read.delim(path, settings);
 };
 
 module.exports = read;
