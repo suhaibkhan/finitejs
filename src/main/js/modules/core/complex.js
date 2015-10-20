@@ -46,6 +46,17 @@ Complex.prototype = {
         return new Complex(sum.getReal(), sum.getImaginary());
     },
 
+    subtract: function(subtrahend) {
+        var difference = this._complex.subtract(
+            new CommonsComplex(
+                subtrahend.real(),
+                subtrahend.imaginary()
+            )
+        );
+
+        return new Complex(difference.getReal(), difference.getImaginary());
+    },
+
     toString: function() {
         var real = this._complex.getReal();
         var imaginary = this._complex.getImaginary();

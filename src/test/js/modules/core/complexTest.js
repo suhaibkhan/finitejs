@@ -28,5 +28,14 @@ exports.test = {
 
         assert.equals(4, c.real());
         assert.equals(6, c.imaginary());
+    },
+
+    testSubtract: function() {
+        var a = new Complex(1,2);
+        var b = new Complex(3,4);
+        var c = a.subtract(b);
+
+        assert.equals(-2, c.real());
+        assert.equals(-2, c.imaginary());
     }
 };
