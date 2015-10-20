@@ -16,6 +16,10 @@ Complex.prototype = {
 
     abs: function() {
         return this.ComplexWrapper.abs(this.real, this.imaginary);
+    },
+
+    conjugate: function() {
+        return new Complex(this.real, -this.imaginary);
     }
 
 };
