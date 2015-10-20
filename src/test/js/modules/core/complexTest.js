@@ -10,7 +10,7 @@ exports.test = {
     testConjugate: function() {
         var complexNumber = new Complex(1,2).conjugate();
 
-        assert.equals(1, complexNumber.real);
-        assert.equals(-2, complexNumber.imaginary);
+        assert.equals(1, complexNumber.real());
+        assert.equals(-2, complexNumber.imaginary());
     }
 };
