@@ -19,5 +19,14 @@ exports.test = {
 
         assert.equals(-1, complexNumber.real());
         assert.equals(-2, complexNumber.imaginary());
+    },
+
+    testAdd: function() {
+        var a = new Complex(1,2);
+        var b = new Complex(3,4);
+        var c = a.add(b);
+
+        assert.equals(4, c.real());
+        assert.equals(6, c.imaginary());
     }
 };

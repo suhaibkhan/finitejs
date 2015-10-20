@@ -1,12 +1,13 @@
 'use strict';
 
+var CommonsComplex = Java.type('org.apache.commons.math3.complex.Complex');
+
 /**
  * Module for complex number operations.
  *
  * @class
  */
 function Complex(real, imaginary){
-    var CommonsComplex = Java.type('org.apache.commons.math3.complex.Complex');
     this._complex = new CommonsComplex(real, imaginary);
 }
 
@@ -32,6 +33,17 @@ Complex.prototype = {
     negate: function() {
         var negated = this._complex.negate();
         return new Complex(negated.getReal(), negated.getImaginary());
+    },
+
+    add: function(addend) {
+        var sum = this._complex.add(
+            new CommonsComplex(
+                addend.real(),
+                addend.imaginary()
+            )
+        );
+
+        return new Complex(sum.getReal(), sum.getImaginary());
     },
 
     toString: function() {
