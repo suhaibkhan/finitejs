@@ -29,6 +29,11 @@ Complex.prototype = {
         return new Complex(conjugate.getReal(), conjugate.getImaginary());
     },
 
+    negate: function() {
+        var negated = this._complex.negate();
+        return new Complex(negated.getReal(), negated.getImaginary());
+    },
+
     toString: function() {
         var real = this._complex.getReal();
         var imaginary = this._complex.getImaginary();

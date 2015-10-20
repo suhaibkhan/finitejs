@@ -12,5 +12,12 @@ exports.test = {
 
         assert.equals(1, complexNumber.real());
         assert.equals(-2, complexNumber.imaginary());
+    },
+
+    testNegate: function() {
+        var complexNumber = new Complex(1,2).negate();
+
+        assert.equals(-1, complexNumber.real());
+        assert.equals(-2, complexNumber.imaginary());
     }
 };
