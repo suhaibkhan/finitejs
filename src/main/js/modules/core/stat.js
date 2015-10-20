@@ -1,18 +1,20 @@
 'use strict';
 
+// java imports
+var Stat = Java.type('com.finitejs.modules.math.stats.Stat');
+
 /**
  * Module for statistical functions.
  *
  * @exports stat
  */
-var Stat = Java.type('com.finitejs.modules.math.stats.Stat');
-
 var stat = {};
 
 /**
  * Returns mean of the values.
  *
- * @param {...number|number[]} values
+ * @param {...Number|Number[]} values
+ * @returns {Number} mean
  */
 stat.mean = function(values) {
     return Array.isArray(values) ?
@@ -22,7 +24,8 @@ stat.mean = function(values) {
 /**
  * Returns standard deviation of the values.
  *
- * @param {...number|number[]} values
+ * @param {...Number|Number[]} values
+ * @returns {Number} standard deviation
  */
 stat.std = function(values) {
     return Array.isArray(values) ?

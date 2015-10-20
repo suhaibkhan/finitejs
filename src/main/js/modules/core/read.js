@@ -260,7 +260,7 @@ Reader.prototype.tsv = function(path, settings){
 
 /**
  * Module for reading different file formats.
- * Exports a function, which can be used to create an instance of {@link Reader}.
+ * Module returns a function, which can be used to create an instance of {@link Reader}.
  * 
  * @exports read
  * @returns {Reader}

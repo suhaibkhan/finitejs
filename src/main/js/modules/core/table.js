@@ -120,7 +120,7 @@ Table.prototype.toString = function(start, limit){
 
 /**
  * Module for tabular data operations.
- * Exports a function that creates a {@link Table} instance based on the arguments.
+ * Module returns function that creates a {@link Table} instance based on the arguments.
  * 
  * @exports table
  * @param {...Array|com.finitejs.modules.read.DataTable} - table constructor 
