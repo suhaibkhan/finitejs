@@ -15,7 +15,7 @@ var DELIMITER = {
 };
 
 // java imports
-var PlainReader = Java.type("com.finitejs.modules.read.PlainReader");
+var PlainReader = Java.type('com.finitejs.modules.read.PlainReader');
 var InputFormatter = Java.type('com.finitejs.modules.read.InputFormatter');
 var InputValidator = Java.type('com.finitejs.modules.read.InputValidator');
 
