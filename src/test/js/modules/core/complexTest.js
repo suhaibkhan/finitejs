@@ -37,5 +37,14 @@ exports.test = {
 
         assert.equals(-2, c.real());
         assert.equals(-2, c.imaginary());
+    },
+
+    testMultiply: function() {
+        var a = new Complex(1,2);
+        var b = new Complex(3,4);
+        var c = a.multiply(b);
+
+        assert.equals(-5, c.real());
+        assert.equals(10, c.imaginary());
     }
 };

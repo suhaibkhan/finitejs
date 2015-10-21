@@ -57,6 +57,17 @@ Complex.prototype = {
         return new Complex(difference.getReal(), difference.getImaginary());
     },
 
+    multiply: function(factor) {
+        var product = this._complex.multiply(
+            new CommonsComplex(
+                factor.real(),
+                factor.imaginary()
+            )
+        );
+
+        return new Complex(product.getReal(), product.getImaginary());
+    },
+
     toString: function() {
         var real = this._complex.getReal();
         var imaginary = this._complex.getImaginary();
