@@ -3,7 +3,7 @@
 var CommonsComplex = Java.type('org.apache.commons.math3.complex.Complex');
 
 /**
- * Module for complex number operations.
+ * Represents a complex number.
  *
  * @class
  */
@@ -11,15 +11,27 @@ function Complex(real, imaginary){
     this._complex = new CommonsComplex(real, imaginary);
 }
 
+/**
+ * Access the real part of the complex number
+ *
+ * @returns {Number} real part of the complex number.
+ */
+Complex.prototype.real = function() {
+    return this._complex.getReal();
+};
+
+/**
+ * Access the imaginary part of the complex number
+ *
+ * @returns {Number} imaginary part of the complex number}
+ */
+Complex.prototype.imaginary = function() {
+    return this._complex.getImaginary();
+};
+
 Complex.prototype = {
 
-    real: function() {
-        return this._complex.getReal();
-    },
 
-    imaginary: function() {
-        return this._complex.getImaginary();
-    },
 
     abs: function() {
         return this._complex.abs();
@@ -66,6 +78,17 @@ Complex.prototype = {
         );
 
         return new Complex(product.getReal(), product.getImaginary());
+    },
+
+    divide: function(divisor) {
+        var result = this._complex.divide(
+            new CommonsComplex(
+                divisor.real(),
+                divisor.imaginary()
+            )
+        );
+
+        return new Complex(result.getReal(), result.getImaginary());
     },
 
     toString: function() {
