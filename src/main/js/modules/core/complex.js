@@ -58,19 +58,22 @@ Complex.prototype.negate = function() {
     return new Complex(negated.getReal(), negated.getImaginary());
 };
 
+/**
+* Return the sum of addend and this.
+*
+* @returns {Complex} Instance of Complex which represents the sum of addend and this.
+*/
+Complex.prototype.add = function(addend) {
+    var sum = this._complex.add(
+        new CommonsComplex(
+            addend.real(),
+            addend.imaginary()
+        )
+    );
+    return new Complex(sum.getReal(), sum.getImaginary());
+};
+
 Complex.prototype = {
-
-    add: function(addend) {
-        var sum = this._complex.add(
-            new CommonsComplex(
-                addend.real(),
-                addend.imaginary()
-            )
-        );
-
-        return new Complex(sum.getReal(), sum.getImaginary());
-    },
-
     subtract: function(subtrahend) {
         var difference = this._complex.subtract(
             new CommonsComplex(
