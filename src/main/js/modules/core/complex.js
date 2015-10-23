@@ -73,18 +73,22 @@ Complex.prototype.add = function(addend) {
     return new Complex(sum.getReal(), sum.getImaginary());
 };
 
+/**
+* Return the difference of addend and this.
+*
+* @returns {Complex} Instance of Complex which represents the difference of addend and this.
+*/
+Complex.prototype.subtract = function(subtrahend) {
+    var difference = this._complex.subtract(
+        new CommonsComplex(
+            subtrahend.real(),
+            subtrahend.imaginary()
+        )
+    );
+    return new Complex(difference.getReal(), difference.getImaginary());
+};
+
 Complex.prototype = {
-    subtract: function(subtrahend) {
-        var difference = this._complex.subtract(
-            new CommonsComplex(
-                subtrahend.real(),
-                subtrahend.imaginary()
-            )
-        );
-
-        return new Complex(difference.getReal(), difference.getImaginary());
-    },
-
     multiply: function(factor) {
         var product = this._complex.multiply(
             new CommonsComplex(
