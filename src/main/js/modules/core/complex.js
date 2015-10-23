@@ -88,38 +88,41 @@ Complex.prototype.subtract = function(subtrahend) {
     return new Complex(difference.getReal(), difference.getImaginary());
 };
 
-Complex.prototype = {
-    multiply: function(factor) {
-        var product = this._complex.multiply(
-            new CommonsComplex(
-                factor.real(),
-                factor.imaginary()
-            )
-        );
-
-        return new Complex(product.getReal(), product.getImaginary());
-    },
-
-    divide: function(divisor) {
-        var result = this._complex.divide(
-            new CommonsComplex(
-                divisor.real(),
-                divisor.imaginary()
-            )
-        );
-
-        return new Complex(result.getReal(), result.getImaginary());
-    },
-
-    toString: function() {
-        var real = this._complex.getReal();
-        var imaginary = this._complex.getImaginary();
-
-        var SIGN = (imaginary>0) ? "+" : "";
-
-        return "(" + real + SIGN + imaginary + "i" + ")";
-    }
-
+/**
+* Return the product of factor and this.
+*
+* @returns {Complex} Instace of Complex which represents the product of factor and this.
+*/
+Complex.prototype.multiply = function(factor) {
+    var product = this._complex.multiply(
+        new CommonsComplex(
+            factor.real(),
+            factor.imaginary()
+        )
+    );
+    return new Complex(product.getReal(), product.getImaginary());
 };
+
+Complex.prototype.divide = function(divisor) {
+    var result = this._complex.divide(
+        new CommonsComplex(
+            divisor.real(),
+            divisor.imaginary()
+        )
+    );
+
+    return new Complex(result.getReal(), result.getImaginary());
+};
+
+
+Complex.prototype.toString = function() {
+    var real = this._complex.getReal();
+    var imaginary = this._complex.getImaginary();
+
+    var SIGN = (imaginary>0) ? "+" : "";
+
+    return "(" + real + SIGN + imaginary + "i" + ")";
+};
+
 
 module.exports = Complex;
