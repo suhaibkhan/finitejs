@@ -103,6 +103,11 @@ Complex.prototype.multiply = function(factor) {
     return new Complex(product.getReal(), product.getImaginary());
 };
 
+/**
+* Returns a Complex whose value is (this / divisor).
+*
+* @returns {Complex} Instance of Complex which represents the value of (this/divisor).
+*/
 Complex.prototype.divide = function(divisor) {
     var result = this._complex.divide(
         new CommonsComplex(
@@ -114,7 +119,9 @@ Complex.prototype.divide = function(divisor) {
     return new Complex(result.getReal(), result.getImaginary());
 };
 
-
+/**
+* @returns {String} Value of this complex number in (a + ib) form.
+**/
 Complex.prototype.toString = function() {
     var real = this._complex.getReal();
     var imaginary = this._complex.getImaginary();
