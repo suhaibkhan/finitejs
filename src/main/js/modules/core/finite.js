@@ -31,8 +31,8 @@ var math = require('math');
 jsEngine.addGlobalVariable('cbrt', math.cbrt);
 
 var stat = require('stat');
-jsEngine.addGlobalVariable('mean', stat.mean);
-jsEngine.addGlobalVariable('std', stat.std);
+// add all functions in stat module as global functions
+jsEngine.addGlobalVariableMap(stat);
 
 var Complex = require('complex');
 jsEngine.addGlobalVariable('Complex', Complex);
