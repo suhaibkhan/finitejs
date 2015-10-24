@@ -1,7 +1,5 @@
 'use strict';
 
-var util = require('util');
-
 exports.test = {
 	
 	testToStringWithArray : function(){
@@ -35,7 +33,7 @@ exports.test = {
 	},
 	
 	testSprintf: function(){
-		assert.equals('1-test', util.sprintf('%d-%s', 1, 'test'));
+		assert.equals('1-test', sprintf('%d-%s', 1, 'test'));
 	}
 	
 };
