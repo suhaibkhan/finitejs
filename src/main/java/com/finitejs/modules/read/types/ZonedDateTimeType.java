@@ -4,6 +4,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Class that represents date with time in a specific time zone column types.
+ */
 public class ZonedDateTimeType extends AbstractDateType<ZonedDateTime>{
 	
 	private ZonedDateTimeType(){}

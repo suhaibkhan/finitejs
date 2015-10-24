@@ -2,6 +2,9 @@ package com.finitejs.modules.read.types;
 
 import com.finitejs.modules.read.ColumnType;
 
+/**
+ * Class that represents string column types.
+ */
 public class StringType implements ColumnType<String>{
 	
 	private StringType(){}

@@ -2,6 +2,9 @@ package com.finitejs.modules.read.types;
 
 import com.finitejs.modules.read.ColumnType;
 
+/**
+ * Class that represents numerical column types.
+ */
 public class NumberType implements ColumnType<Double>{
 	
 	private NumberType(){}

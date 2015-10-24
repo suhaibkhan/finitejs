@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
+/**
+ * Class that represents date only column types.
+ */
 public class DateType extends AbstractDateType<LocalDate>{
 	
 	private DateType(){}

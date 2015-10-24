@@ -11,6 +11,11 @@ import com.finitejs.modules.read.types.StringType;
 import com.finitejs.modules.read.types.TimeType;
 import com.finitejs.modules.read.types.ZonedDateTimeType;
 
+/**
+ * Represents a column type in {@link DataTable}.
+ * 
+ * @param <T> type of the column
+ */
 public interface ColumnType<T> {
 	
 	/**
