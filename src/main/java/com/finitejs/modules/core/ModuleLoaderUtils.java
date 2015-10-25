@@ -252,7 +252,7 @@ public class ModuleLoaderUtils {
 	 * @return package file contents
 	 * @throws IOException
 	 */
-	public String readModulePackageFile(String modulePath) throws IOException{
+	public static String readModulePackageFile(String modulePath) throws IOException{
 		String packageFileContents = null;
 		File packageFile = new File(modulePath, MODULE_PACKAGE_FILE_NAME);
 		if (packageFile.exists()){
@@ -272,7 +272,7 @@ public class ModuleLoaderUtils {
 	 * @param packageMainFile  module main file, can be null
 	 * @return absolute path to directory module main file or null if not found
 	 */
-	public String checkModulePackageMain(String packageDir, String packageMainFile){
+	public static String checkModulePackageMain(String packageDir, String packageMainFile){
 		String modulePath = null;
 		File packageMain;
 		
