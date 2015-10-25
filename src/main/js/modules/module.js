@@ -18,6 +18,7 @@
 		this.parent = parent;
 		this.exports = {};
 		this.filename = null;
+		this.info = null;
 	}
 	
 	// loads a module
@@ -60,6 +61,7 @@
 		if (!module){
 			module = new Module(id, parent);
 			module.filename = moduleFilePath;
+			module.info = modulePackageInfo || null;
 			
 			// compile module 
 			compileSuccess = module._compile();
