@@ -44,11 +44,6 @@ public class ModuleLoaderUtils {
 	private static final String DEFAULT_MODULE_DIRNAME = "modules";
 	
 	/**
-	 * Constant for finite.js core module directory name.
-	 */
-	private static final String CORE_MODULE_DIRNAME = "core";
-	
-	/**
 	 * Constant for finite.js core module name.
 	 * <p>
 	 * Core module is the JavaScript entry point of finite.js and
@@ -116,8 +111,6 @@ public class ModuleLoaderUtils {
 	 * then these modules are loaded relative to parent file and main 
 	 * file relative to working directory. Main file is the file supplied to
 	 * finite.js as command line argument.</li>
-	 * <li>Check whether if it is a core module. Core modules also exists in
-	 * modules directory, but does not require to specify core module directory name.</li>
 	 * <li>Check whether if module exists in modules directory.</li>
 	 * </p>
 	 * 
@@ -206,18 +199,7 @@ public class ModuleLoaderUtils {
 			return modulePath;
 		}
 		
-		// check whether core module in modules/core dir
-		File coreModuleDir = new File(ConfigManager.getInstance().getModulesPath(), 
-				CORE_MODULE_DIRNAME);
-		String coreModuleDirPath = coreModuleDir.getAbsolutePath();
-		
-		modulePath = checkModuleExists(coreModuleDirPath, moduleId);
-		
-		if (modulePath != null){
-			return modulePath;
-		}
-		
-		// modules other than core modules
+		// check in modules dir
 		String modulesDirPath = ConfigManager.getInstance().getModulesPath();
 		
 		modulePath = checkModuleExists(modulesDirPath, moduleId);
