@@ -37,7 +37,7 @@
 			}catch(ioex){}
 			
 			if (modulePackageContents){
-				modulePackageInfo = eval(modulePackageContents);
+				modulePackageInfo = JSON.parse(modulePackageContents);
 				modulePackageMain = modulePackageInfo.main || null;
 			}
 			
