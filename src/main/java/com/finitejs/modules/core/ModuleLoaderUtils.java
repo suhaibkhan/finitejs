@@ -257,6 +257,9 @@ public class ModuleLoaderUtils {
 		File packageFile = new File(modulePath, MODULE_PACKAGE_FILE_NAME);
 		if (packageFile.exists()){
 			packageFileContents = FileUtils.readTextFile(packageFile);
+			// strip comments from package file
+			packageFileContents = packageFileContents.replaceAll(
+					"(?:\\/\\*(?:[^\\*]|(?:\\*+[^\\*\\/]))*\\*+\\/)|(?:\\/\\/.*)", "");
 		}
 		return packageFileContents;
 	}
