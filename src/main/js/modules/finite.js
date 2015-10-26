@@ -11,15 +11,15 @@ var jsEngine = JSEngine.getInstance();
 // get core modules and set as global variables to be 
 // shared across contexts.
 
-var Map = require('map');
-jsEngine.addGlobalVariable('Map', Map);
-
 var util = require('util');
 jsEngine.addGlobalVariable('util', util);
 jsEngine.addGlobalVariable('sprintf', util.sprintf);
 
 var assert = require('assert');
 jsEngine.addGlobalVariable('assert', assert);
+
+var Map = require('map');
+jsEngine.addGlobalVariable('Map', Map);
 
 var table = require('table');
 jsEngine.addGlobalVariable('table', table);
