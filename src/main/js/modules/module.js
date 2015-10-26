@@ -59,6 +59,14 @@
 		// check for module in cache
 		module = _modulesCache[moduleFilePath];
 		if (!module){
+			
+			// for relative modules starting with 
+			// ../ and ./ module id will be there full file name.
+			if (id.slice(0, 3) === '../' || 
+					id.slice(0, 2) === './'){
+				id = moduleFilePath;
+			}
+			
 			module = new Module(id, parent);
 			module.filename = moduleFilePath;
 			module.info = modulePackageInfo || null;
