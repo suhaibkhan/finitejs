@@ -140,7 +140,10 @@ public class ModuleLoaderUtils {
 			return modulePath;
 		}
 		
-		// if parent path is not available use current working dir as parent path
+		// if parent path is not available use current working directory as parent path
+		// in shell mode parent path is not available, so all relative 
+		// modules starting with ./ or ../ will be loaded with 
+		// relative to working directory
 		if (parentFilePath == null || isMain){
 			parentFilePath = FileUtils.getWorkingDir();
 		}
@@ -155,45 +158,48 @@ public class ModuleLoaderUtils {
 			moduleId = String.format("%s%s", "./", moduleId);
 		}
 		
-		// check whether relative to parent file path
-		if (moduleId.startsWith("./")){
-			// strip ./
-			moduleId = moduleId.substring(2);
-			
-			// correct environment based file seperator
-			moduleId = moduleId.replaceAll("/", File.separator);
-			
-			// get parent directory
-			File parentFile = new File(parentFilePath);
-			String parentDirPath = parentFile.getParent();
-			if (parentFile.isDirectory()){
-				// if parentFilePath is working directory
-				parentDirPath = parentFile.getAbsolutePath();
-			}
-			
-			modulePath = checkModuleExists(parentDirPath, moduleId);
-			
-			// null if module not found
-			return modulePath;
-		}
-		
 		// check whether relative to parent of parent file path
-		if (moduleId.startsWith("../")){
-			// strip ./
-			moduleId = moduleId.substring(3);
+		// or relative to parent file path
+		if (moduleId.startsWith("../") || moduleId.startsWith("./")){
+			
+			File parentFile;
+			
+			// resolve all ../ and ./
+			while(moduleId.startsWith("../") || moduleId.startsWith("./")){
+				
+				// get parent file
+				parentFile = new File(parentFilePath);
+				
+				if (moduleId.startsWith("../")){
+					// strip ../
+					moduleId = moduleId.substring(3);
+					
+					if (parentFile.isDirectory()){
+						// if parentFilePath points to a directory
+						parentFilePath = parentFile.getParent();
+					}else{
+						// if parentFilePath points to a file
+						parentFilePath = parentFile.getParentFile().getParent();
+					}
+					
+				}else if (moduleId.startsWith("./")){
+					// strip ./
+					moduleId = moduleId.substring(2);
+					
+					if (parentFile.isDirectory()){
+						// if parentFilePath points to a directory
+						parentFilePath = parentFile.getAbsolutePath();
+					}else{
+						// if parentFilePath points to a file
+						parentFilePath = parentFile.getParent();
+					}
+				}
+			}
 			
 			// correct environment based file seperator
 			moduleId = moduleId.replaceAll("/", File.separator);
 			
-			// get parent directory
-			File parentFile = new File(parentFilePath);
-			String parentDirPath = parentFile.getParentFile().getParent();
-			if (parentFile.isDirectory()){
-				// if parentFilePath is working directory
-				parentDirPath = parentFile.getParent();
-			}
-			
-			modulePath = checkModuleExists(parentDirPath, moduleId);
+			modulePath = checkModuleExists(parentFilePath, moduleId);
 			
 			// null if module not found
 			return modulePath;
