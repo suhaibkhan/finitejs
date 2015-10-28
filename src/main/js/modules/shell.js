@@ -6,6 +6,9 @@
  * @module shell
  */
 
+// File utils
+var FileUtils = Java.type("com.finitejs.modules.core.FileUtils");
+
 // Console I/O utils
 var console = Java.type("com.finitejs.modules.core.ConsoleUtils");
 
@@ -18,16 +21,25 @@ var jsEngine = JSEngine.getInstance();
 // Get a BufferedReader to System.in
 var consoleReader = console.getInputReader();
 
-// make these variables available globally in this context.
-// these are available only inside the anonymous function
-// executed by module loader.
+// set module filename to current working directory 
+// so that relative modules loaded from shell 
+// will be relative to this path
+module.filename = FileUtils.getWorkingDir();
 
-var sharedObjects = {};
-sharedObjects.exports = exports;
-sharedObjects.require = require;
-sharedObjects.__filename = module.filename = '<shell>';
-sharedObjects.__dirname = '<shell>';
+// clear shell module parent
+// no need of that
+module.parent = null;
 
+// make these variables available globally in this context
+// if not set these variables will be available only inside 
+// the anonymous function executed by module loader.
+var sharedObjects = {
+	exports : exports,
+	require : require,
+	module : module,
+	__filename : module.filename,
+	__dirname : module.filename
+};
 jsEngine.addGlobalVariableMap(sharedObjects);
 
 function start(){
@@ -52,7 +64,7 @@ function start(){
 			// parse input to enable mutiline expressions
 			// TODO
 			
-			// use shell context to parse all input
+			// evaluate input in global scope
 			output = jsEngine.eval(input);
 			
 			// print if a variable or output not null
@@ -71,7 +83,7 @@ function start(){
 				}else{
 					// try to print JSON representation of object instead of [object Object]
 					// JSON representation of array is printed instead of Array.toString
-					console.println(JSON.stringify(output));
+					console.println(JSON.stringify(output, null, 2));
 				}
 			}
 			

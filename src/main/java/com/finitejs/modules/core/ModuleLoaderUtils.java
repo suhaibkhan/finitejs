@@ -65,7 +65,7 @@ public class ModuleLoaderUtils {
 	 */
 	private static final String MODULE_TEMPLATE = String.format("%s%s", 
 			"(function (exports, require, module, __filename, __dirname){",
-			"%n%s%n}).call(this, module.exports, module.require, module, '%s', '%s');");
+			"%n%s%n}).call(module.exports, module.exports, require, module, '%s', '%s');");
 	
 	/**
 	 * Reads contents of a module script based on the 

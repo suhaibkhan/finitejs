@@ -1,16 +1,6 @@
 'use strict';
 
 (function(exports){
-		
-	// modules will be cached under file name
-	var _modulesCache = {};
-	
-	//Java class with utility methods for loading modules.
-	var NativeModulesUtil = Java.type("com.finitejs.modules.core.ModuleLoaderUtils");
-	// Console I/O utility
-	var console = Java.type("com.finitejs.modules.core.ConsoleUtils");
-	// JSEngine for executing JavaScript.
-	var JSEngine = Java.type('com.finitejs.system.JSEngine');
 	
 	// Module class
 	function Module(id, parent){
@@ -21,6 +11,15 @@
 		this.info = null;
 	}
 	
+	// modules will be cached under file name
+	Module._modulesCache = {};
+	
+	//Java class with utility methods for loading modules.
+	Module._nativeUtil = Java.type("com.finitejs.modules.core.ModuleLoaderUtils");
+	
+	// Console I/O utility
+	Module._console = Java.type("com.finitejs.modules.core.ConsoleUtils");
+	
 	// loads a module
 	Module._load = function(id, parent, isMain){
 		
@@ -28,13 +27,13 @@
 		
 		var parentFilePath = parent ? parent.filename : null;
 		var module, compileSuccess, modulePackageContents, modulePackageInfo, modulePackageMain;
-		var moduleFilePath = NativeModulesUtil.resolveModuleFilePath(id, parentFilePath, isMain);
+		var moduleFilePath = Module._nativeUtil.resolveModuleFilePath(id, parentFilePath, isMain);
 		
 		// resolve directory modules by reading package files
-		if (moduleFilePath != null && !moduleFilePath.endsWith(NativeModulesUtil.JS_EXTENSION)){
+		if (moduleFilePath != null && !moduleFilePath.endsWith(Module._nativeUtil.JS_EXTENSION)){
 			try{
 				// read package.json inside directory
-				modulePackageContents = NativeModulesUtil.readModulePackageFile(moduleFilePath);
+				modulePackageContents = Module._nativeUtil.readModulePackageFile(moduleFilePath);
 			}catch(ioex){}
 			
 			if (modulePackageContents){
@@ -43,12 +42,12 @@
 			}
 			
 			// will return null if main not found
-			moduleFilePath = NativeModulesUtil.checkModulePackageMain(
+			moduleFilePath = Module._nativeUtil.checkModulePackageMain(
 					moduleFilePath, modulePackageMain);
 		}
 		
 		if (moduleFilePath == null){
-			console.errorf('Module %s not found. %n', id);
+			Module._console.errorf('Module %s not found. %n', id);
 			if (!__shell){
 				// Terminate program if a module not found.
 				quit();
@@ -57,7 +56,7 @@
 		}
 		
 		// check for module in cache
-		module = _modulesCache[moduleFilePath];
+		module = Module._modulesCache[moduleFilePath];
 		if (!module){
 			
 			// for relative modules starting with 
@@ -76,7 +75,7 @@
 						
 			if (compileSuccess){
 				// save module to cache
-				_modulesCache[moduleFilePath] = module;
+				Module._modulesCache[moduleFilePath] = module;
 			}else{
 				// shell mode
 				return null;
@@ -84,7 +83,25 @@
 		}
 		
 		return module.exports;
-	}
+	};
+	
+	
+	// execute module script and update module reference
+	// with exports
+	Module._execute = function(module, moduleScript){
+		
+		// hide module loader local/protected variables
+		// from execution
+		var Module;
+		
+		// global function required by modules
+		var require = function(id, isMain){
+			return module.require(id, isMain);
+		};
+		
+		eval(moduleScript);
+		
+	};
 	
 	Module.prototype._compile = function(){
 		
@@ -94,17 +111,14 @@
 		
 		try{
 			// read module script
-			moduleScript = NativeModulesUtil.readModule(moduleFilePath); 
-		
-			// current module is set as global module variable
-			JSEngine.getInstance().addGlobalVariable('module', this);
+			moduleScript = Module._nativeUtil.readModule(moduleFilePath); 
 			
-			// compile and execute
-			JSEngine.getInstance().eval(moduleScript);
+			// execute and update module reference with exports
+			Module._execute(this, moduleScript);
 			
 		}catch(moduleException){
 			compileSuccess = false;
-			console.error(moduleException);
+			Module._console.error(moduleException);
 			if (!__shell){
 				// Terminate program if a module not found.
 				quit();
