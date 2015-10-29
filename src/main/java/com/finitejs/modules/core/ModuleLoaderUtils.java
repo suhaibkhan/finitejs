@@ -262,10 +262,7 @@ public class ModuleLoaderUtils {
 		String packageFileContents = null;
 		File packageFile = new File(modulePath, MODULE_PACKAGE_FILE_NAME);
 		if (packageFile.exists()){
-			packageFileContents = FileUtils.readTextFile(packageFile);
-			// strip comments from package file
-			packageFileContents = packageFileContents.replaceAll(
-					"(?:\\/\\*(?:[^\\*]|(?:\\*+[^\\*\\/]))*\\*+\\/)|(?:\\/\\/.*)", "");
+			packageFileContents = FileUtils.readJSONFile(packageFile);
 		}
 		return packageFileContents;
 	}

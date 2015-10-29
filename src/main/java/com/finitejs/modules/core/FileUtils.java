@@ -33,7 +33,7 @@ public class FileUtils {
 	/**
 	 * Reads a text file, given {@code File} as argument.
 	 * 
-	 * @param file file to read
+	 * @param file  file to read
 	 * @return file contents
 	 * @throws IOException
 	 */
@@ -42,6 +42,21 @@ public class FileUtils {
 		return new String(fileBytes, StandardCharsets.UTF_8);
 	}
 
+	/**
+	 * Read JSON file.
+	 * 
+	 * @param file  JSON file to read
+	 * @return JSON file contents
+	 * @throws IOException
+	 */
+	public static String readJSONFile(File file) throws IOException{
+		String jsonFileContents = readTextFile(file);
+		// strip comments from JSON file
+		jsonFileContents = jsonFileContents.replaceAll(
+				"(?:\\/\\*(?:[^\\*]|(?:\\*+[^\\*\\/]))*\\*+\\/)|(?:\\/\\/.*)", "");
+		return jsonFileContents;
+	}
+	
 	/**
 	 * Get current working directory.
 	 * 
