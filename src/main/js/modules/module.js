@@ -118,10 +118,12 @@
 			
 		}catch(moduleException){
 			compileSuccess = false;
-			Module._console.error(moduleException);
 			if (!__shell){
+				Module._console.error(moduleException);
 				// Terminate program if a module not found.
 				quit();
+			}else{
+				throw moduleException;
 			}
 		}
 		
