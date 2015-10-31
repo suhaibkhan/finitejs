@@ -118,6 +118,8 @@
 			
 		}catch(moduleException){
 			compileSuccess = false;
+			// print module name before error
+			Module._console.errorf('Error loading module : %s%n', this.id);
 			if (!__shell){
 				Module._console.error(moduleException);
 				// Terminate program if a module not found.
