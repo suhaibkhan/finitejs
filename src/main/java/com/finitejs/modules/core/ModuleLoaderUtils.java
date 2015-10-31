@@ -64,7 +64,7 @@ public class ModuleLoaderUtils {
 	 * </p>
 	 */
 	private static final String MODULE_TEMPLATE = String.format("%s%s", 
-			"(function (exports, require, module, __filename, __dirname){",
+			"(function (exports, require, module, __filename, __dirname, moduleScript){",
 			"%n%s%n}).call(module.exports, module.exports, require, module, '%s', '%s');");
 	
 	/**
