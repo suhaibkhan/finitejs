@@ -119,6 +119,15 @@ Table.prototype.toString = function(start, limit){
 };
 
 /**
+ * Returns underlying {@code com.finitejs.modules.read.DataTable}.
+ * 
+ * @returns {com.finitejs.modules.read.DataTable}
+ */
+Table.prototype.getDataTable = function(){
+	return this._table;
+};
+
+/**
  * Module for tabular data operations.
  * Module returns function that creates a {@link Table} instance based on the arguments.
  * 
