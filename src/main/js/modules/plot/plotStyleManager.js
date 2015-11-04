@@ -1,3 +1,4 @@
+'use strict';
 
 // Module used by plot module for loading themes
 
@@ -39,7 +40,7 @@ module.exports = {
 		// load current theme
 		if (module.parent && module.parent.info && 
 				module.parent.info.config && module.parent.info.config.theme){
-			loadTheme(module.parent.info.cnfig.theme);
+			loadTheme(module.parent.info.config.theme);
 		}
 	},
 	
