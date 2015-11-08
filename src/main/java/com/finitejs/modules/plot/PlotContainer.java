@@ -1,5 +1,6 @@
 package com.finitejs.modules.plot;
 
+import java.awt.Dimension;
 import java.awt.Insets;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -74,6 +75,24 @@ public class PlotContainer {
 					// set title
 					frame.setTitle(title);
 					
+					// set size
+			        Insets insets = frame.getContentPane().getInsets();
+					frame.getContentPane().setPreferredSize(new Dimension(width + insets.left + insets.right, 
+							height + insets.top + insets.bottom));
+					
+					frame.pack();
+					
+					// center frame
+					frame.setLocationRelativeTo(null);
+					
+					// add resize event
+					frame.addComponentListener(new ComponentAdapter(){
+						@Override
+						public void componentResized(ComponentEvent e){
+							redraw();
+						}
+					});
+					
 					// add close event
 					frame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 					frame.addWindowListener(new WindowAdapter() {
@@ -85,23 +104,6 @@ public class PlotContainer {
 							}
 					    }
 					});
-					
-					// add resize event
-					frame.addComponentListener(new ComponentAdapter(){
-						@Override
-						public void componentResized(ComponentEvent e){
-							redraw();
-						}
-					});
-					
-					// set size
-			        Insets insets = frame.getInsets();
-					frame.setSize(width + insets.left + insets.right, 
-							height + insets.top + insets.bottom);
-					
-					// center frame
-					frame.setLocationRelativeTo(null);
-					
 				}
 			}
 		};
@@ -123,7 +125,7 @@ public class PlotContainer {
 						
 						// update layout helper
 						plotPanel.getLayoutHelper().setParentDimensions(
-								frame.getWidth(), frame.getHeight());
+								frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
 						
 						// update bounds
 						Insets insets = frame.getContentPane().getInsets();
@@ -195,7 +197,8 @@ public class PlotContainer {
 					
 					// create a new panel with default layout specifiers
 					PlotLayoutHelper layoutHelper  = new PlotLayoutHelper("0%", "0%", "100%", "100%");
-					layoutHelper.setParentDimensions(frame.getWidth(), frame.getHeight());
+					layoutHelper.setParentDimensions(
+							frame.getContentPane().getWidth(), frame.getContentPane().getHeight());
 					PlotPanel plotPanel = new PlotPanel(plot, layoutHelper);
 					plotPanelList.add(plotPanel);
 					
