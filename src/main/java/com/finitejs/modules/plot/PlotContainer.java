@@ -77,7 +77,8 @@ public class PlotContainer {
 					
 					// set size
 			        Insets insets = frame.getContentPane().getInsets();
-					frame.getContentPane().setPreferredSize(new Dimension(width + insets.left + insets.right, 
+					frame.getContentPane().setPreferredSize(new Dimension(
+							width + insets.left + insets.right, 
 							height + insets.top + insets.bottom));
 					
 					frame.pack();
@@ -140,6 +141,7 @@ public class PlotContainer {
 		};
 		
 		try {
+			// initiate redraw and do not wait to complete
 			execInEventDispatchThread(thread, false);
 		} catch (InvocationTargetException e) {
 			// log error
