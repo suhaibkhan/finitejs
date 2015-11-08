@@ -111,6 +111,12 @@ public class PlotLayoutHelper {
 		}
 		
 		// parse 
-		return Float.parseFloat(measurementSpecifier) * relativeFactor;
+		float measurement = Float.parseFloat(measurementSpecifier) * relativeFactor;
+		
+		// handle negative values
+		if (measurement < 0){
+			measurement = relativeMeasurement + measurement;
+		}
+		return measurement;
 	}
 }
