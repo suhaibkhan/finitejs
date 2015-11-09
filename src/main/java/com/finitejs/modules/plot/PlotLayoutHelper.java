@@ -30,6 +30,15 @@ public class PlotLayoutHelper {
 	/** Height of parent component */
 	private int parentHeight;
 	
+	/**
+	 * Creates a layout helper given position and size specifiers.
+	 * Specifiers can be pixel values(like 100px or 100) or percentage values(like 100%).
+	 * 
+	 * @param left  left position specifier, if negative will be considered as right position offset
+	 * @param top  top position specifier, if negative will be considered as bottom position offset
+	 * @param width  width measurement specifier
+	 * @param height  height measurement specifier
+	 */
 	public PlotLayoutHelper(String left, String top, String width, String height){
 		this.left = left;
 		this.top = top;

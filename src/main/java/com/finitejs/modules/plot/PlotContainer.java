@@ -41,6 +41,13 @@ public class PlotContainer {
 	/** Window/Frame height */
 	private int height;
 	
+	/**
+	 * Creates a plot container.
+	 * 
+	 * @param width  width of the window in pixels
+	 * @param height  height of the window in pixels
+	 * @param title  title of the window
+	 */
 	public PlotContainer(int width, int height, String title){
 		plotPanelList = new ArrayList<>();
 		

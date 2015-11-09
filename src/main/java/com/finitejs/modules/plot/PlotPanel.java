@@ -18,6 +18,12 @@ public class PlotPanel extends JPanel {
 	/** {@code PlotLayoutHelper} used position the plot inside the parent. */
 	private PlotLayoutHelper layoutHelper;
 	
+	/**
+	 * Creates a plot panel.
+	 * 
+	 * @param plot  plot to be drawn on the panel
+	 * @param layoutHelper  layout helper with positioning attributes
+	 */
 	public PlotPanel(Plot plot, PlotLayoutHelper layoutHelper){
 		this.plot = plot;
 		this.layoutHelper = layoutHelper;
