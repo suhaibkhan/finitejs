@@ -6,11 +6,11 @@ package com.finitejs.modules.plot;
  */
 public class PlotLayoutHelper {
 	
-	/** Constant for pixel value prefix. */
-	private static final String PIXEL_PREFIX = "px";
+	/** Constant for pixel value suffix. */
+	private static final String PIXEL_SUFFIX = "px";
 	
-	/** Constant for percentage value prefix. */
-	private static final String PERCENTAGE_PREFIX = "%";
+	/** Constant for percentage value suffix. */
+	private static final String PERCENTAGE_SUFFIX = "%";
 
 	/** Left position specifier */
 	private String left;
@@ -101,10 +101,10 @@ public class PlotLayoutHelper {
 		// remove whitespaces from specifier
 		measurementSpecifier = measurementSpecifier.toLowerCase().replaceAll("\\s", "");
 		
-		if (measurementSpecifier.endsWith(PIXEL_PREFIX)){
+		if (measurementSpecifier.endsWith(PIXEL_SUFFIX)){
 			// check whether a pixel value
 			measurementSpecifier = measurementSpecifier.substring(0, measurementSpecifier.length() - 2);
-		}else if (measurementSpecifier.endsWith(PERCENTAGE_PREFIX)){
+		}else if (measurementSpecifier.endsWith(PERCENTAGE_SUFFIX)){
 			// check whether a percentage value
 			measurementSpecifier = measurementSpecifier.substring(0, measurementSpecifier.length() - 1);
 			relativeFactor = relativeMeasurement/100f;
