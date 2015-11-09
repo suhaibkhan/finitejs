@@ -20,6 +20,11 @@ public class CmdLineArgProcessor {
 	public static final String DEBUG_ENABLE_SETTING = "-Debug";
 	
 	/**
+	 * Constant for command line argument prefix.
+	 */
+	private static final String CMDLINE_ARG_PREFIX = "-";
+	
+	/**
 	 * Processes command line arguments passed to finite.js executable.
 	 * 
 	 * @param args command line arguments
@@ -42,7 +47,7 @@ public class CmdLineArgProcessor {
 				}else{
 					// first non-settings argument will be considered 
 					// as main file to be executed.
-					if (mainFile == null){
+					if (mainFile == null && !args[i].startsWith(CMDLINE_ARG_PREFIX)){
 						mainFile = args[i];
 					}
 				}
