@@ -44,13 +44,13 @@ public class PlotStyleManager {
 	private PlotStyleManager(String plotModulePath) throws FileNotFoundException{
 		
 		if (plotModulePath == null){
-			throw new NullPointerException("Plot module path cannot be null.");
+			throw new NullPointerException("Plot module path cannot be null");
 		}
 		
 		// get path to themes directory
 		File themesDir = new File(plotModulePath, THEME_DIRECTORY);
 		if (!themesDir.exists()){
-			throw new FileNotFoundException("Plot themes directory not found.");
+			throw new FileNotFoundException("Plot themes directory not found");
 		}else{
 			themesPath = themesDir.getAbsolutePath();
 		}
@@ -59,15 +59,26 @@ public class PlotStyleManager {
 	}
 	
 	/**
-	 * Creates and returns singleton instance of plot style manager.
+	 * Initializes and creates a singleton instance of plot style manager.
 	 * 
 	 * @param plotModulePath  path to the plot module directory
-	 * @return instance of {@code PlotStyleManager}
 	 * @throws FileNotFoundException if themes directory not found
 	 */
-	public static PlotStyleManager getInstance(String plotModulePath) throws FileNotFoundException{
+	public static void init(String plotModulePath) throws FileNotFoundException{
 		if (instance == null){
 			instance = new PlotStyleManager(plotModulePath);
+		}
+	}
+	
+	/**
+	 * Returns singleton instance of plot style manager.
+	 * 
+	 * @return instance of {@code PlotStyleManager}
+	 * @throws NullPointerException if plot style manager not initialized
+	 */
+	public static PlotStyleManager getInstance(){
+		if (instance == null){
+			throw new NullPointerException("Plot style manager not initialized");
 		}
 		return instance;
 	}
@@ -84,7 +95,7 @@ public class PlotStyleManager {
 		String themeContents;
 		
 		if (theme == null){
-			throw new NullPointerException("Theme cannot be null.");
+			throw new NullPointerException("Theme cannot be null");
 		}
 		
 		// check whether theme file exists
@@ -95,7 +106,7 @@ public class PlotStyleManager {
 		
 		File themeFile = new File(themesPath, theme);
 		if (!themeFile.exists()){
-			throw new FileNotFoundException("Plot theme file not found.");
+			throw new FileNotFoundException("Plot theme file not found");
 		}
 		
 		// read theme file 
@@ -117,8 +128,13 @@ public class PlotStyleManager {
 	 * 
 	 * @param key  key of style attribute/property
 	 * @return attribute/property value
+	 * @throws NullPointerException if style attribute not found
 	 */
 	public String get(String key){
+		if (!styleMap.containsKey(key)){
+			throw new NullPointerException(
+					String.format("Style attribute %s not found in plot theme", key));
+		}
 		return styleMap.get(key);
 	}
 }

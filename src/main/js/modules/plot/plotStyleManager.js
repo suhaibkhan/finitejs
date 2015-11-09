@@ -7,8 +7,10 @@ var PlotStyleManager = Java.type('com.finitejs.modules.plot.PlotStyleManager');
 
 var curTheme, plotStyleManager;
 
+// initialize plot style manager
+PlotStyleManager.init(__dirname);
 //get instance of plot style manager
-plotStyleManager = PlotStyleManager.getInstance(__dirname)
+plotStyleManager = PlotStyleManager.getInstance();
 
 // load a theme
 function loadTheme(theme){
@@ -22,6 +24,12 @@ function loadTheme(theme){
 	
 	themeContents = plotStyleManager.readTheme(theme);
 	themeMap = JSON.parse(themeContents);
+	// convert every value in themeMap to string
+	for (var key in themeMap){
+		if (themeMap[key] !== null && themeMap.hasOwnProperty(key)) {
+			themeMap[key] = '' + themeMap[key];
+		}
+	}
 	plotStyleManager.setTheme(themeMap);
 	
 	// set as current theme
