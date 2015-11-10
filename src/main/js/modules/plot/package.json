@@ -1,0 +1,10 @@
+{
+	/** Main file */
+	"main": "plot.js",
+	
+	/** Module related configuration.  */
+	"config" : {
+		"theme": "default" // plot theme name
+	}
+	
+}

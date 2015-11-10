@@ -1,0 +1,41 @@
+{
+	/** Plot default theme file */
+	
+	/** Plot panel background. Plot panel include plot + margin. */
+	"panel.background" : "#FFFFFF",
+	
+	/** 
+	 * Plot background.
+	 * Plot is the portion excluding margin and border.
+	 */
+	"plot.background" : "#FFFFFF",
+	
+	/** Plot margin */
+	"plot.margin.left" : 10,
+	"plot.margin.top" : 10,
+	"plot.margin.right" : 10,
+	"plot.margin.bottom" : 10,
+	
+	/** Plot padding */
+	"plot.padding.left" : 10,
+	"plot.padding.top" : 10,
+	"plot.padding.right" : 10,
+	"plot.padding.bottom" : 10,
+	
+	/** Plot border attributes */
+	"plot.border.width" : 1,
+	"plot.border.color" : "#000000",
+	
+	/** Plot title attributes */
+	"plot.title.font" : "SansSerif",
+	"plot.title.font.size" : 16,
+	// font style can be "plain", "bold", "italic" or "bold italic"
+	"plot.title.font.style" : "bold",
+	"plot.title.font.color" : "#000000",
+	
+	/** 
+	 * Spacing between title bottom and plot region top. 
+	 * This spacing will be considered only if title exists 
+	 */
+	"plot.title_region.spacing" : 10
+}
