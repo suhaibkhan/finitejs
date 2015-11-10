@@ -1,12 +1,13 @@
 package com.finitejs.modules.plot;
 
-public class LinePlot extends PlotPanel {
+public class LinePlot extends XYPlot {
 
-	public LinePlot(Axis xAxis, Axis yAxis) {
-		super(xAxis, yAxis);
-		// TODO Auto-generated constructor stub
+	public LinePlot(){
+		this(null);
 	}
-
-	private static final long serialVersionUID = 1L;
+	
+	public LinePlot(String title) {
+		super(title);
+	}
 
 }

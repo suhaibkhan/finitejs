@@ -140,6 +140,15 @@ public abstract class Plot {
 	}
 	
 	/**
+	 * Returns the rectangle that defines the plot region.
+	 * 
+	 * @return plot region bounds as a {@link Rectangle}
+	 */
+	public Rectangle getPlotRegion(){
+		return plotRegionRect;
+	}
+	
+	/**
 	 * Returns value of the specified style attribute loaded from theme file.
 	 * 
 	 * @param attributeName  style attribute name
