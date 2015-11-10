@@ -73,10 +73,6 @@ public abstract class Plot {
 	/** Rectangle that defines plot region */
 	private Rectangle plotRegionRect;
 	
-	protected Plot(){
-		this(null);
-	}
-	
 	protected Plot(String title){
 		// set title
 		this.title = title;
