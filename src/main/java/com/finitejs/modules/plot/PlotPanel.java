@@ -43,7 +43,9 @@ public class PlotPanel extends JPanel {
 		super.paintComponent(g);	
 		Graphics2D g2 = (Graphics2D)g;
 		if (plot != null){
-			plot.render(g2, getWidth(), getHeight());
+			// update plot size
+			plot.setSize(getWidth(), getHeight());
+			plot.render(g2);
 		}
 		g2.dispose();
 	}
