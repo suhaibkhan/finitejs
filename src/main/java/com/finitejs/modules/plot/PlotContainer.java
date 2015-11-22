@@ -88,6 +88,7 @@ public class PlotContainer {
 							width + insets.left + insets.right, 
 							height + insets.top + insets.bottom));
 					
+					// resize frame to content pane
 					frame.pack();
 					
 					// center frame

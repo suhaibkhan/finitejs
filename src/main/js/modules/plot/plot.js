@@ -3,7 +3,7 @@
 //Module:plot for visualizing data.
 
 // java imports
-var LinePlot = Java.type('com.finitejs.modules.plot.LinePlot');
+var NativePlot = Java.type('com.finitejs.modules.plot.Plot');
 var PlotContainer = Java.type('com.finitejs.modules.plot.PlotContainer');
 
 var plotThemeManager = require('./plotThemeManager');
@@ -80,7 +80,7 @@ Plot.prototype.render = function(){
 	var nativePlot;
 	
 	if (this._geom === 'line'){
-		nativePlot = new LinePlot('Sample Line Plot');
+		nativePlot = new NativePlot('Sample Line Plot');
 	}
 	
 	this._container = new PlotContainer(640, 480, null);

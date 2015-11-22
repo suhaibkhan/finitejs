@@ -30,6 +30,15 @@ public class PlotPanel extends JPanel {
 	}
 	
 	/**
+	 * Returns the plot drawn on this panel.
+	 * 
+	 * @return plot 
+	 */
+	public Plot getPlot(){
+		return plot;
+	}
+	
+	/**
 	 * Returns the layout helper used to position this plot.
 	 * 
 	 * @return {@code PlotLayoutHelper}
