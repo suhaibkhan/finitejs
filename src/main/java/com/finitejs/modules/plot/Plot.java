@@ -13,11 +13,12 @@ import java.awt.font.TextLayout;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Abstract parent class of all plots.
- * Responsible for rendering common plot elements like 
- * margin, border, padding, title.
+ * Represents a plot.
+ * 
  * <pre>
  * Plot Anatomy
  * ============
@@ -43,22 +44,25 @@ import java.text.AttributedString;
  *    
  * </pre>
  */
-public abstract class Plot {
+public class Plot {
 	
-	/** Font style constants */
-	private static final String PLAIN = "plain";
-	private static final String ITALIC = "italic";
-	private static final String BOLD = "bold";
-	private static final String BOLD_ITALIC = "bold italic";
+	/** Plot title */
+	private String title;
+	
+	/** List of series in plot */
+	private List<Series> seriesList;
+	
+	/** List of axes */
+	private List<Axis> axisList;
+	
+	/** Plot style */
+	private PlotStyle style;
 	
 	/** Plot width */
 	private int width;
 	
 	/** Plot height */
 	private int height;
-	
-	/** Plot title */
-	private String title;
 	
 	/** Plot title font */
 	private Font titleFont;
@@ -73,19 +77,37 @@ public abstract class Plot {
 	/** Rectangle that defines plot region */
 	private Rectangle plotRegionRect;
 	
-	protected Plot(String title){
+	/** 
+	 * Constructor
+	 */
+	public Plot(){
+		this(null);
+	}
+	
+	/**
+	 * Constructor
+	 * 
+	 * @param title  plot title
+	 */
+	public Plot(String title){
+		
 		// set title
 		this.title = title;
 		
-		// plot should be created only after
-		// loading all style attributes
+		seriesList = new ArrayList<>();
+		axisList = new ArrayList<>();
+		
+		// initialize plot style with attributes from theme
+		// plot should be created only after loading theme
+		style = new PlotStyle(PlotThemeManager.getInstance().getTheme());
 		
 		// load title font and cache it
-		String titleFontName = getStyle(PlotStyleAttributes.PLOT_TITLE_FONT);
-		int titleFontSize = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_TITLE_FONT_SIZE));
-		String titleFontStyleName = getStyle(PlotStyleAttributes.PLOT_TITLE_FONT_STYLE);
+		String titleFontName = style.get(PlotStyle.PLOT_TITLE_FONT);
+		int titleFontSize = Integer.parseInt(style.get(PlotStyle.PLOT_TITLE_FONT_SIZE));
+		String titleFontStyleName = style.get(PlotStyle.PLOT_TITLE_FONT_STYLE);
 		
-		titleFont = new Font(titleFontName, getFontStyle(titleFontStyleName), titleFontSize);
+		titleFont = new Font(titleFontName, PlotStyle.getFontStyle(titleFontStyleName), titleFontSize);
+		
 		// empty rectangle
 		plotRegionRect = new Rectangle();
 	}
@@ -148,80 +170,43 @@ public abstract class Plot {
 		return plotRegionRect;
 	}
 	
-	/**
-	 * Returns value of the specified style attribute loaded from theme file.
-	 * 
-	 * @param attributeName  style attribute name
-	 * @return value of the style attribute
-	 */
-	protected String getStyle(String attributeName){
-		return PlotStyleManager.getInstance().get(attributeName);
-	}
-	
-	/**
-	 * Get font style integer value from style name.
-	 * 
-	 * @param styleName  font style name
-	 * @return font style integer value
-	 */
-	protected int getFontStyle(String styleName){
-		int fontStyle;
-		switch (styleName.toLowerCase()){
-			case PLAIN :  
-				fontStyle = Font.PLAIN;
-				break;
-			case ITALIC : 
-				fontStyle = Font.ITALIC;
-				break;
-			case BOLD :
-				fontStyle = Font.BOLD;
-				break;
-			case BOLD_ITALIC :
-				fontStyle = Font.BOLD | Font.ITALIC;
-				break;
-			default :
-				fontStyle = Font.PLAIN;
-		}
-		return fontStyle;
-	}
-	
 	public void render(Graphics2D g){
 		
 		g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		
-		int topMargin = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_TOP_MARGIN));
-		int rightMargin = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_RIGHT_MARGIN));
-		int bottomMargin = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_BOTTOM_MARGIN));
-		int leftMargin = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_LEFT_MARGIN));
+		int topMargin = Integer.parseInt(style.get(PlotStyle.PLOT_TOP_MARGIN));
+		int rightMargin = Integer.parseInt(style.get(PlotStyle.PLOT_RIGHT_MARGIN));
+		int bottomMargin = Integer.parseInt(style.get(PlotStyle.PLOT_BOTTOM_MARGIN));
+		int leftMargin = Integer.parseInt(style.get(PlotStyle.PLOT_LEFT_MARGIN));
 		
-		int topPadding = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_TOP_PADDING));
-		int rightPadding = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_RIGHT_PADDING));
-		int bottomPadding = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_BOTTOM_PADDING));
-		int leftPadding = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_LEFT_PADDING));
+		int topPadding = Integer.parseInt(style.get(PlotStyle.PLOT_TOP_PADDING));
+		int rightPadding = Integer.parseInt(style.get(PlotStyle.PLOT_RIGHT_PADDING));
+		int bottomPadding = Integer.parseInt(style.get(PlotStyle.PLOT_BOTTOM_PADDING));
+		int leftPadding = Integer.parseInt(style.get(PlotStyle.PLOT_LEFT_PADDING));
 				
 		// fill panel background if any
-		String panelBackgroundColor = getStyle(PlotStyleAttributes.PANEL_BACKGROUND);
+		String panelBackgroundColor = style.get(PlotStyle.PANEL_BACKGROUND);
 		if (panelBackgroundColor != null){
 			g.setPaint(Color.decode(panelBackgroundColor));
 			g.fill(new Rectangle2D.Double(0, 0, width, height));
 		}
 		
 		// find plot dimensions excluding margin and border
-		int borderStrokeWidth = Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_BORDER_WIDTH));
+		int borderStrokeWidth = Integer.parseInt(style.get(PlotStyle.PLOT_BORDER_WIDTH));
 		int plotBoxLeft = leftMargin + borderStrokeWidth;
 		int plotBoxTop = topMargin + borderStrokeWidth;
 		int plotBoxWidth = width - (leftMargin + rightMargin) - (borderStrokeWidth * 2);
 		int plotBoxHeight = height - (topMargin + bottomMargin) - (borderStrokeWidth * 2);
 		
 		//  fill plot region including padding
-		String plotBackgroundColor = getStyle(PlotStyleAttributes.PLOT_BACKGROUND);
+		String plotBackgroundColor = style.get(PlotStyle.PLOT_BACKGROUND);
 		if (plotBackgroundColor != null){
 			g.setPaint(Color.decode(plotBackgroundColor));
 			g.fill(new Rectangle2D.Double(plotBoxLeft, plotBoxTop, plotBoxWidth, plotBoxHeight));
 		}
 		
 		// draw border
-		String borderColor = getStyle(PlotStyleAttributes.PLOT_BORDER_COLOR);		
+		String borderColor = style.get(PlotStyle.PLOT_BORDER_COLOR);		
 		if (borderStrokeWidth > 0){
 			
 			int borderLeft = leftMargin + borderStrokeWidth/2;
@@ -249,7 +234,7 @@ public abstract class Plot {
 				AttributedString styledString = new AttributedString(title);
 				styledString.addAttribute(TextAttribute.FONT, titleFont);
 				// set color
-				String titleFontColor = getStyle(PlotStyleAttributes.PLOT_TITLE_FONT_COLOR);
+				String titleFontColor = style.get(PlotStyle.PLOT_TITLE_FONT_COLOR);
 				styledString.addAttribute(TextAttribute.FOREGROUND, Color.decode(titleFontColor));
 				
 				AttributedCharacterIterator titleCharItr = styledString.getIterator();
@@ -291,7 +276,7 @@ public abstract class Plot {
 			// update title height
 			titleHeight = Math.round(drawPosY) - titleTop;
 			// add spacing with region to title height
-			titleHeight += Integer.parseInt(getStyle(PlotStyleAttributes.PLOT_TITLE_REGION_SPACING));
+			titleHeight += Integer.parseInt(style.get(PlotStyle.PLOT_TITLE_REGION_SPACING));
 
 		}
 		
