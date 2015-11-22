@@ -3,14 +3,14 @@
 // Module used by plot module for loading themes
 
 // java imports
-var PlotStyleManager = Java.type('com.finitejs.modules.plot.PlotStyleManager');
+var PlotThemeManager = Java.type('com.finitejs.modules.plot.PlotThemeManager');
 
-var curTheme, plotStyleManager;
+var curTheme, plotThemeManager;
 
-// initialize plot style manager
-PlotStyleManager.init(__dirname);
-//get instance of plot style manager
-plotStyleManager = PlotStyleManager.getInstance();
+// initialize plot theme manager
+PlotThemeManager.init(__dirname);
+//get instance of plot theme manager
+plotThemeManager = PlotThemeManager.getInstance();
 
 // load a theme
 function loadTheme(theme){
@@ -22,7 +22,7 @@ function loadTheme(theme){
 		return;
 	}
 	
-	themeContents = plotStyleManager.readTheme(theme);
+	themeContents = plotThemeManager.readTheme(theme);
 	themeMap = JSON.parse(themeContents);
 	// convert every value in themeMap to string
 	for (var key in themeMap){
@@ -30,7 +30,7 @@ function loadTheme(theme){
 			themeMap[key] = '' + themeMap[key];
 		}
 	}
-	plotStyleManager.setTheme(themeMap);
+	plotThemeManager.setTheme(themeMap);
 	
 	// set as current theme
 	curTheme = theme;
@@ -39,11 +39,11 @@ function loadTheme(theme){
 module.exports = {
 	
 	/**
-	 * Initializes plot style manager by loading current configured theme.
+	 * Initializes plot theme manager by loading current configured theme.
 	 */
 	init : function(){
 		// default theme is loaded before current theme
-		loadTheme(PlotStyleManager.DEFAULT_THEME);
+		loadTheme(PlotThemeManager.DEFAULT_THEME);
 		
 		// load current theme
 		if (module.parent && module.parent.info && 
@@ -53,18 +53,10 @@ module.exports = {
 	},
 	
 	/**
-	 * Loads the specified theme in plot style manager. Will skip
+	 * Loads the specified theme in plot theme manager. Will skip
 	 * the operation if theme already loaded.
 	 * 
 	 * @param {String} theme - theme name 
 	 */
-	loadTheme : loadTheme,
-	
-	/**
-	 * Returns specified plot style property.
-	 * 
-	 * @param {String} key - style property key
-	 * @returns {String} property value
-	 */
-	get : plotStyleManager.get
+	loadTheme : loadTheme
 };

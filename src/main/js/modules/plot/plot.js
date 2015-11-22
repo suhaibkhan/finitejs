@@ -6,9 +6,9 @@
 var LinePlot = Java.type('com.finitejs.modules.plot.LinePlot');
 var PlotContainer = Java.type('com.finitejs.modules.plot.PlotContainer');
 
-var plotStyleManager = require('./plotStyleManager');
-// initialize plot style manager
-plotStyleManager.init();
+var plotThemeManager = require('./plotThemeManager');
+// initialize plot theme manager
+plotThemeManager.init();
 
 /**
  * Represents a plot/visualization.
@@ -43,7 +43,7 @@ var plot = function(table){
  * @static
  */
 plot.theme = function(theme){
-	plotStyleManager.loadTheme('' + theme);
+	plotThemeManager.loadTheme('' + theme);
 };
 
 Plot.prototype.aes = function(aes){

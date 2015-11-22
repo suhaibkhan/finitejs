@@ -9,10 +9,10 @@ import java.util.Map;
 import com.finitejs.modules.core.FileUtils;
 
 /**
- * Singleton class for handling plot styles.
+ * Singleton class for handling plot themes.
  * This class will be initialized from finite.js plot module.
  */
-public class PlotStyleManager {
+public class PlotThemeManager {
 
 	/**
 	 * Constant for default plot module theme.
@@ -31,17 +31,17 @@ public class PlotStyleManager {
 	private static final String THEME_EXTENSION = ".json";
 
 	/**
-	 * {@code PlotStyleManager} singleton instance.
+	 * {@code PlotThemeManager} singleton instance.
 	 */
-	private static PlotStyleManager instance;
+	private static PlotThemeManager instance;
 	
 	/** Path to the themes directory. */
 	private String themesPath;
 	
 	/** Map that contains style attributes read from theme files. */
-	private Map<String, String> styleMap;
+	private final Map<String, String> themeMap;
 	
-	private PlotStyleManager(String plotModulePath) throws FileNotFoundException{
+	private PlotThemeManager(String plotModulePath) throws FileNotFoundException{
 		
 		if (plotModulePath == null){
 			throw new NullPointerException("Plot module path cannot be null");
@@ -55,30 +55,30 @@ public class PlotStyleManager {
 			themesPath = themesDir.getAbsolutePath();
 		}
 		
-		styleMap = new HashMap<>();
+		themeMap = new HashMap<>();
 	}
 	
 	/**
-	 * Initializes and creates a singleton instance of plot style manager.
+	 * Initializes and creates a singleton instance of plot theme manager.
 	 * 
 	 * @param plotModulePath  path to the plot module directory
 	 * @throws FileNotFoundException if themes directory not found
 	 */
 	public static void init(String plotModulePath) throws FileNotFoundException{
 		if (instance == null){
-			instance = new PlotStyleManager(plotModulePath);
+			instance = new PlotThemeManager(plotModulePath);
 		}
 	}
 	
 	/**
-	 * Returns singleton instance of plot style manager.
+	 * Returns singleton instance of plot theme manager.
 	 * 
-	 * @return instance of {@code PlotStyleManager}
-	 * @throws NullPointerException if plot style manager not initialized
+	 * @return instance of {@code PlotThemeManager}
+	 * @throws NullPointerException if plot theme manager not initialized
 	 */
-	public static PlotStyleManager getInstance(){
+	public static PlotThemeManager getInstance(){
 		if (instance == null){
-			throw new NullPointerException("Plot style manager not initialized");
+			throw new NullPointerException("Plot theme manager not initialized");
 		}
 		return instance;
 	}
@@ -117,24 +117,18 @@ public class PlotStyleManager {
 	/**
 	 * Set/replace style attributes loaded from theme file.
 	 * 
-	 * @param themeMap  style attributes as key-value pair
+	 * @param themeMap  style attributes from theme file as key-value pair
 	 */
 	public void setTheme(Map<String, String> themeMap){
-		styleMap.putAll(themeMap);
+		this.themeMap.putAll(themeMap);
 	}
 	
 	/**
-	 * Returns value of plot style attribute/property with specified key.
+	 * Returns map  that contains style attributes read from theme files.
 	 * 
-	 * @param key  key of style attribute/property
-	 * @return attribute/property value
-	 * @throws NullPointerException if style attribute not found
+	 * @return theme map
 	 */
-	public String get(String key){
-		if (!styleMap.containsKey(key)){
-			throw new NullPointerException(
-					String.format("Style attribute %s not found in plot theme", key));
-		}
-		return styleMap.get(key);
+	public Map<String, String> getTheme(){
+		return themeMap;
 	}
 }
