@@ -80,7 +80,8 @@ Plot.prototype.render = function(){
 	var nativePlot;
 	
 	if (this._geom === 'line'){
-		nativePlot = new NativePlot('Sample Line Plot');
+		nativePlot = new NativePlot();
+		nativePlot.getFrame().setTitle('Sample Line Plot');
 	}
 	
 	this._container = new PlotContainer(640, 480, null);
