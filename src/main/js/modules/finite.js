@@ -37,6 +37,9 @@ jsEngine.addGlobalVariableMap(stat);
 var Complex = require('complex');
 jsEngine.addGlobalVariable('Complex', Complex);
 
+var plot = require('plot');
+jsEngine.addGlobalVariable('plot', plot);
+
 if (!__shell){
 	// load main file passed as cmd line argument
 	require(__mainfile, true);
