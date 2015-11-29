@@ -57,6 +57,18 @@ public class PowerScale extends LinearScale{
 		return domain;
 	}
 
+	@Override
+	public double[] getTicks(int maxTicksCount) {
+		double min = domain[0]; // first
+		double max = domain[domain.length - 1]; // last
+		if (min > max){
+			// swap
+			max = domain[0];
+			min = domain[domain.length - 1];
+		}
+		return calculateTicks(min, max, maxTicksCount);
+	}
+	
 	/**
 	 * Returns exponent of the exponential scale.
 	 * 

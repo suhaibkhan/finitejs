@@ -3,13 +3,11 @@ package com.finitejs.modules.plot.scales;
 import org.apache.commons.math3.analysis.interpolation.LinearInterpolator;
 import org.apache.commons.math3.analysis.polynomials.PolynomialSplineFunction;
 
-import com.finitejs.modules.plot.Scale;
-
 /**
  * Represents a linear scale, which maps a continuous input domain to 
  * continuous output range.
  */
-public class LinearScale implements Scale<Double, Double>{
+public class LinearScale extends NumericScale{
 
 	/** input domain */
 	private Double[] domain;
@@ -82,27 +80,24 @@ public class LinearScale implements Scale<Double, Double>{
 		return range;
 	}
 	
+	@Override
+	public double[] getTicks(int maxTicksCount) {
+		double min = domain[0]; // first
+		double max = domain[domain.length - 1]; // last
+		if (min > max){
+			// swap
+			max = domain[0];
+			min = domain[domain.length - 1];
+		}
+		return calculateTicks(min, max, maxTicksCount);
+	}
+	
 	private void generateInterpFunctions(){
 		if (domain != null && range != null){
 			// re initaite interp function
 			interpFunction = new LinearInterpolator().interpolate(unbox(domain), unbox(range));
 			invertInterpFunction = new LinearInterpolator().interpolate(unbox(range), unbox(domain));
 		}
-	}
-	
-	/**
-	 * Converts {@code Double} array to {@code double} array.
-	 * 
-	 * @param objectArray  {@code Double} array
-	 * @return {@code double} array
-	 */
-	protected static double[] unbox(Double[] objectArray){
-		double[] array = new double[objectArray.length];
-		int i = 0;
-		for (double v : objectArray){
-			array[i++] = v;
-		}
-		return array;
 	}
 
 }

@@ -1,9 +1,9 @@
 package com.finitejs.modules.plot.scales;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class PowerScaleTest {
 
@@ -29,4 +29,8 @@ public class PowerScaleTest {
 		assertEquals(10, powScale.invert(100d), 0);
 	}
 	
+	@Test
+	public void testGetTicks(){
+		assertEquals(5, powScale.getTicks(10)[5], 0);
+	}
 }

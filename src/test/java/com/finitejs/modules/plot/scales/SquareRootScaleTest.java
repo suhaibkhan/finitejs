@@ -1,9 +1,9 @@
 package com.finitejs.modules.plot.scales;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class SquareRootScaleTest {
 
@@ -29,4 +29,8 @@ public class SquareRootScaleTest {
 		assertEquals(100, sqrtScale.invert(10d), 0);
 	}
 	
+	@Test
+	public void testGetTicks(){
+		assertEquals(50, sqrtScale.getTicks(10)[5], 0);
+	}
 }

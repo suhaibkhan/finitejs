@@ -1,9 +1,9 @@
 package com.finitejs.modules.plot.scales;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class LogScaleTest {
 
@@ -27,6 +27,11 @@ public class LogScaleTest {
 		assertEquals(1, logScale.invert(0d), 0);
 		assertEquals(3.1622776601683795, logScale.invert(50d), 0);
 		assertEquals(10, logScale.invert(100d), 0);
+	}
+	
+	@Test
+	public void testGetTicks(){
+		assertEquals(6, logScale.getTicks(10)[5], 0);
 	}
 	
 }

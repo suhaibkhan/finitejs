@@ -1,9 +1,9 @@
 package com.finitejs.modules.plot.scales;
 
+import static org.junit.Assert.assertEquals;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class LinearScaleTest {
 
@@ -29,4 +29,8 @@ public class LinearScaleTest {
 		assertEquals(10, linearScale.invert(100d), 0);
 	}
 	
+	@Test
+	public void testGetTicks(){
+		assertEquals(5, linearScale.getTicks(10)[5], 0);
+	}
 }
