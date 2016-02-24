@@ -22,6 +22,8 @@ cd build/distributions/finitejs-0.1.0
 read.csv('samples/sample.csv');
 quit();
 ```
+#### Disclaimer
+finite.js uses JxBrowser http://www.teamdev.com/jxbrowser, which is a proprietary software. The use of JxBrowser is governed by JxBrowser Product Licence Agreement http://www.teamdev.com/jxbrowser-licence-agreement. If you would like to use JxBrowser in your development, please contact TeamDev.
 #### Contribute
 finite.js uses Nashorn JavaScript engine which is a part of Java 8, to execute JavaScript 
 and it follows CommonJS module system similar to Node.js. So any JavaScript developer can
